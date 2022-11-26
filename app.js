@@ -1,42 +1,76 @@
+//requires by node_modules
 const http = require('http');
 const fs = require('fs');
 const path = require('path');
 const os = require('os');
 const express = require('express');
 const session = require('express-session');
+const cors = require('cors');
+const date = require('date-and-time')
+let cookieParser = require('cookie-parser');
 
 
+//requires by local files
+const jshandler = require('./server/modules/jshandler');
+
+
+//functions
+const replacerFunc = () => {
+  const visited = new WeakSet();
+  return (key, value) => {
+    if (typeof value === "object" && value !== null) {
+      if (visited.has(value)) {
+        return;
+      }
+      visited.add(value);
+    }
+    return value;
+  };
+};
+
+
+//environment variables
+process.env.runstat=3;  // 0-error 1=running, 2=maintaince, 3=installing
+process.env.webtitle='My Saves';
+process.env.mongohost='';  //mongo host url
+
+
+//express app setup
 const app = express();
 const port = process.env.PORT || 3000;
 
 
+//middleware
+app.use(cors());
+app.use(cookieParser());
 app.use(session({
   secret: 'mysavesasecret', //please change this to something more secure
   resave: true,
   cookie: { maxAge: 1000 * 60 * 60 * 24 },
   saveUninitialized: true,
 }));
-
-
 app.set('views', path.join(__dirname, 'host/html'));
 app.engine('html', require('ejs').renderFile);
 app.set('view engine', 'html');
+app.use(express.static(path.join(__dirname, 'host/static')));
+app.use('/content', express.static(path.join(__dirname, 'host')));
 
 
-app.get('/app/*', (req, res) => {
-  res.send('in app');
-});
-app.get('*', (req, res) => {
-  if(req.url=='/favicon.ico'){
-    const ico=fs.readFileSync(path.join(__dirname, 'host/img/icon/ico.png'));
-    res.send(ico);
-  } else {
-    res.status=200;
-    res.render('index.html',{js: 'OK'});
+
+//routes
+app.all('*', (req, res) => {
+  if(req.params[0]=='/app.js'){
+    jsscript=jshandler.jsscript(req.query);
+    res.set('Content-Type', 'text/javascript');
+    res.send(jsscript);
+  } else{
+    jsquery=jshandler.jsquery();
+    res.render('index.html',{htmltitle: process.env.webtitle, jsquery: jsquery});
   }
 });
 
 
+//server
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`)
 });
