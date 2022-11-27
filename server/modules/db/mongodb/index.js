@@ -1,5 +1,4 @@
 MongoClient = require('mongodb').MongoClient;
-url = "mongodb+srv://Shubham:Shubham@mysaves.wj18yun.mongodb.net/?retryWrites=true&w=majority";
 
 function connectshow(){
     MongoClient.connect(url, function(err, db) {
