@@ -40,11 +40,12 @@ process.env.mongohost='';  //mongo host url
 const app = express();
 const port = process.env.PORT || 3000;
 localStorage = new LocalStorage('./server/localstorage');
+localStorage.clear();
 var urlencodedParser = bodyParser.urlencoded({ extended: false })  
 
 
 //middleware
-app.use(cors());
+app.use(cors());  //5 */1 * * *  ,  0 0 0-23 * * *  ,  "cronpass": "Shub"
 app.use(urlencodedParser);
 app.use(cookieParser());
 app.use(session({
@@ -64,27 +65,35 @@ app.use('/content', express.static(path.join(__dirname, 'host')));
 //routes
 app.all('*', async (req, res) => {
   if(req.params[0]=='/app.js'){
-    jsscript=jshandler.jsscript(req.query);
-    res.set('Content-Type', 'text/javascript');
-    res.send(jsscript);
+    jsscript=jshandler.jsscript(req.query,res);
+    
   } else if(req.params[0]=='/installsetup'){
     res.set('Content-Type', 'application/json');
     if(process.env.runstat==3){
       if(req.body.a=='startbtn'){
         res.send('{"statcode":"1" , "stat":"Succes", "code":"'+localStorage.getItem('installstate')+'"}')
-      } else if(req.body.a=='mongoenter'){
+      } else if(req.body.a=='mongoenter' && req.body.mongostring!=undefined){
         installer.connectmongo(req.body.mongostring,res);
+      } else if(req.body.a=='sqlenter'){
+        
+      } else if(req.body.a=='mbse'){
+        installer.connectmailwithservice(req.body,res);
+      } else if(req.body.a=='mbhe'){
+        installer.connectmailwithhost(req.body,res);
       } else{
-        res.send('{"statcode":"0" , "stat":"Failed", "error":"Installed or in maintaince mode or error mode"}');
+        res.send('{"statcode":"0" , "stat":"Failed", "error":"Parameter Error"}');
       }
     } else{
-      res.send('{"statcode":"0" , "stat":"Failed", "error":"Parameter Error"}');
+      res.send('{"statcode":"0" , "stat":"Failed", "error":"Installed or in maintaince mode or error mode"}');
     }
-  } else if(req.params[0]=='/req'){
+  } else if(req.params[0]=='/server/cron'){
+    res.set('Content-Type', 'application/json');
+    res.send(JSON.stringify(req, replacerFunc()));
+  } else if(req.params[0]=='/server/req'){
     res.set('Content-Type', 'application/json');
     res.send(JSON.stringify(req, replacerFunc()));
   } else{
-    jsquery=jshandler.jsquery();
+    jsquery=jshandler.jsquery(res);
     res.render('index.html',{htmltitle: process.env.webtitle, jsquery: jsquery});
   }
 });

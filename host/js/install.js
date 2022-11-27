@@ -9,10 +9,10 @@ function loadinstall(p){
                 if(res.statcode=="1"){
                     if(res.code=='a'){
                         gebi('installhead').innerHTML='Database Setup';
-                        gebi('installcontent').innerHTML='<div class="field input-field"><label>MongoDB String</label><br><input id="mongostring" type="text" placeholder="MongoDB String" class="input"></div><br><div class="field button-field"><button onclick="mongoenter()">Check</button></div>';
+                        dbm();
                     } else if(res.code=='b'){
                         gebi('installhead').innerHTML='Setup Mail Service';
-                        gebi('installcontent').innerHTML='<div class="field input-field"><label>Mail Host</label><br><input id="mailhost" type="text" placeholder="Mail Host" class="input"></div><br><div class="field button-field"><button onclick="mongoenter()">Check</button></div>';
+                        mbh();
                     }
                 } else{
                     gebi('errorinstalling').innerHTML=res.error;
@@ -23,6 +23,33 @@ function loadinstall(p){
     xhr.open('POST','/installsetup',true);
     xhr.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
     xhr.send(p);
+}
+function dbm(){
+    gebi('installcontent').innerHTML='<div class="field button-field"><button onclick="dbs()">Switch to SQL</button></div><br><header>Database: MongoDB</header><div class="field input-field"><label>MongoDB String</label><br><input id="mongostring" type="text" placeholder="MongoDB String" class="input"></div><br><div class="field button-field"><button onclick="mongoenter()">Check</button></div>';
+}
+function dbs(){
+    gebi('installcontent').innerHTML='<div class="field button-field"><button onclick="dbm()">Switch to MongoDB</button></div><br><header>Database: SQL</header>  <div class="field input-field"><label>Database Host</label><br><input id="dbhost" type="text" placeholder="Database Host" class="input"></div><br></br>   <div class="field input-field"><label>Database Port</label><br><input id="dbport" type="text" placeholder="Database Port" class="input"></div><br></br>   <div class="field input-field"><label>Database Host</label><br><input id="dbhost" type="text" placeholder="Database Host" class="input"></div><br></br>  <div class="field button-field"><button onclick="sqlenter()">Check</button></div>';
+}
+function mbs(){
+    gebi('installcontent').innerHTML='<div class="field button-field"><button onclick="mbh()">Switch to Mail by Host</button></div><br><header>Mail By Service</header><div class="field input-field"><label>Mail Service</label><br><input id="mailservice" type="text" placeholder="Mail Service" class="input"></div><br></br><div class="field input-field"><label>Email</label><br><input id="email" type="email" placeholder="Email" class="input"></div><br></br><div class="field input-field"><label>Email User Name</label><br><input id="euname" type="text" placeholder="Email User Name" class="input"></div><br></br><div class="field input-field"><label>Email Password</label><br><input id="epassword" type="text" placeholder="Email Password" class="input"></div><br></br><div class="field button-field"><button onclick="mbse()">Check</button></div>';
+}
+function mbh(){
+    gebi('installcontent').innerHTML='<div class="field button-field"><button onclick="mbs()">Switch to Mail by Service</button></div><br><header>Mail By Host</header><div class="field input-field"><label>Mail Host</label><br><input id="mailhost" type="text" placeholder="Mail Host" class="input"></div><br></br><div class="field input-field"><label>Mail Port</label><br><input id="mailport" type="number" placeholder="Mail Port" class="input"></div><br></br><div class="field input-field"><label>Email</label><br><input id="email" type="email" placeholder="Email" class="input"></div><br></br><div class="field input-field"><label>Email User Name</label><br><input id="euname" type="text" placeholder="Email User Name" class="input"></div><br></br><div class="field input-field"><label>Email Password</label><br><input id="epassword" type="text" placeholder="Email Password" class="input"></div><br></br><div class="field button-field"><button onclick="mbhe()">Check</button></div>';
+}
+function mbse(){
+    var mailservice=gebi('mailservice').value;
+    var email=gebi('email').value;
+    var euname=gebi('euname').value;
+    var epassword=gebi('epassword').value;
+    loadinstall('a=mbse&mailservice='+mailservice+'&email='+email+'&euname='+euname+'&epassword='+epassword);
+}
+function mbhe(){
+    var mailhost=gebi('mailhost').value;
+    var mailport=gebi('mailport').value;
+    var email=gebi('email').value;
+    var euname=gebi('euname').value;
+    var epassword=gebi('epassword').value;
+    loadinstall('a=mbhe&mailhost='+mailhost+'&mailport='+mailport+'&email='+email+'&euname='+euname+'&epassword='+epassword);
 }
 function mongoenter(){
     var mongostring=gebi('mongostring').value;
@@ -60,10 +87,15 @@ function app(){
     loadbasehtml();
     loadtools();
     startinstall();
-    removeloader();
+    // removeloader();
 }
 try{
     app();
 } catch(err){
     gebi('starterror').innerHTML = err;
 }
+
+
+
+
+

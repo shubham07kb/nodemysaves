@@ -11,12 +11,13 @@ function jsquery(){
     return '';
   }
 }
-function jsscript(query){
+function jsscript(query,res){
     if(query.jsfile=='install'){
       p='';
       p+=fs.readFileSync('./host/js/install.js');
     }
-    return p;
+    res.set('Content-Type', 'text/javascript');
+    res.send(p);
 }
 module.exports = {
     jsquery : jsquery,
