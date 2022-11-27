@@ -2,7 +2,7 @@ const mongo=require('mongodb');
 const nodemailer = require('nodemailer');
 const { prototype } = require('nodemailer/lib/dkim');
 const LocalStorage = require('node-localstorage').LocalStorage;
-localStorage = new LocalStorage('./server/localstorage');
+localStorage = new LocalStorage('./server/ls');
 const MongoClient = mongo.MongoClient;
 function connectmongo(url,res){
     url=url.trim();

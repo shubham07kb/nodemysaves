@@ -39,7 +39,8 @@ process.env.mongohost='';  //mongo host url
 //express app setup
 const app = express();
 const port = process.env.PORT || 3000;
-localStorage = new LocalStorage('./server/localstorage');
+fs.mkdirSync('./server/ls');
+localStorage = new LocalStorage('./server/ls');
 localStorage.clear();
 var urlencodedParser = bodyParser.urlencoded({ extended: false })  
 
