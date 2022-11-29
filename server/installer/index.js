@@ -1,8 +1,9 @@
 const mongo=require('mongodb');
 const nodemailer = require('nodemailer');
-const { prototype } = require('nodemailer/lib/dkim');
-const LocalStorage = require('node-localstorage').LocalStorage;
-localStorage = new LocalStorage('./server/ls');
+const path=require('path');
+const localstorage=require(process.env.rootpath+'/server/modules/localstorage');
+localStorage=new localstorage.localStorage(path.join(process.env.rootpath+'/server/localstorage'));
+localStorage.setItem('installstate', 'a');
 const MongoClient = mongo.MongoClient;
 function connectmongo(url,res){
     url=url.trim();

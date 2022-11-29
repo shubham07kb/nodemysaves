@@ -7,13 +7,19 @@ const session = require('express-session');
 const cors = require('cors');
 let cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
-const LocalStorage = require('node-localstorage').LocalStorage;
 
+
+//environment variables
+process.env.runstat=3;  // 0-error 1=running, 2=maintaince, 3=installing
+process.env.webtitle='My Saves';
+process.env.mongohost='';  //mongo host url
+process.env.rootpath=__dirname;
+b=process.env.aa;
 
 //requires by local files         mongodb+srv://Shubham:Shubham@mysaves.wj18yun.mongodb.net/?retryWrites=true
 const jshandler = require('./server/modules/jshandler');
 const installer = require('./server/installer');
-
+const localstorage =require('./server/modules/localstorage');
 
 //functions
 const replacerFunc = () => {
@@ -30,17 +36,9 @@ const replacerFunc = () => {
 };
 
 
-//environment variables
-process.env.runstat=3;  // 0-error 1=running, 2=maintaince, 3=installing
-process.env.webtitle='My Saves';
-process.env.mongohost='';  //mongo host url
-
-
 //express app setup
 const app = express();
 const port = process.env.PORT || 3000;
-fs.mkdirSync('./server/ls');
-localStorage = new LocalStorage('./server/ls');
 localStorage.clear();
 var urlencodedParser = bodyParser.urlencoded({ extended: false })  
 
@@ -68,6 +66,9 @@ app.all('*', async (req, res) => {
   if(req.params[0]=='/app.js'){
     jsscript=jshandler.jsscript(req.query,res);
     
+  } else if(req.params[0]=='/sev'){
+    localStorage.showAll();
+    res.send('Done');
   } else if(req.params[0]=='/installsetup'){
     res.set('Content-Type', 'application/json');
     if(process.env.runstat==3){
@@ -102,5 +103,6 @@ app.all('*', async (req, res) => {
 
 //server
 app.listen(port, () => {
+  // console.log('process.env.aa.bb: '+b.localstorage);
   console.log(`App running at ${port}`)
 });

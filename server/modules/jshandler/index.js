@@ -1,6 +1,8 @@
 const fs=require('fs');
-const LocalStorage = require('node-localstorage').LocalStorage;
-localStorage = new LocalStorage('./server/ls');
+const path=require('path');
+const localstorage =require(path.join(__dirname,'..','localstorage'));
+localStorage=new localstorage.localStorage(path.join(process.env.rootpath+'/server/localstorage'));
+localStorage.setItem('installstate', 'a');
 function jsquery(){
   if(process.env.runstat==3){
     if(localStorage.getItem('installstate')==null){
