@@ -7,7 +7,7 @@ function jsscript(query,res){
     p='';
     if(query.jsfile=='install'){
       p+=fs.readFileSync('./host/js/install.js');
-    } else if(query.jsfile=='install'){
+    } else if(query.jsfile=='ext'){
       p+=fs.readFileSync('./host/js/ext.js');
     }
     res.set('Content-Type', 'text/javascript');
