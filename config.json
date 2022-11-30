@@ -1,0 +1,23 @@
+{
+    "app" : {
+        "name" : "MySaves",
+        "version" : "0.0.0 beta hax",
+        "description" : "CMS",
+        "author" : "Shubham",
+        "email" : "kumarbansal.shubham07@gmail.com"
+    },
+    "db":{
+        "type" : "mongo",
+        "mongostring" : "mongodb+srv://Shubham:Shubham@mysaves.wj18yun.mongodb.net/?retryWrites=true"
+    },
+    "email":{
+        "host" : "smtp.gmail.com",
+        "port" : 587,
+        "email" : "web@mysaves.live",
+        "auth" : {
+            "user" : "kumarbansal.shubham07@gmail.com",
+            "pass" : "wojjdxyusycttmwf"
+        }
+    },
+    "session-key" : "fdttf7tb6dbgfv"
+}

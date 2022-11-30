@@ -1,4 +1,3 @@
-//requires by node_modules
 const express = require('express');
 const fs = require('fs');
 const path = require('path');
@@ -7,48 +6,18 @@ const session = require('express-session');
 const cors = require('cors');
 let cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
-
-
-//environment variables
-process.env.runstat=3;  // 0-error 1=running, 2=maintaince, 3=installing
-process.env.webtitle='My Saves';
-process.env.mongohost='';  //mongo host url
-process.env.rootpath=__dirname;
-b=process.env.aa;
-
-//requires by local files         mongodb+srv://Shubham:Shubham@mysaves.wj18yun.mongodb.net/?retryWrites=true
 const jshandler = require('./server/modules/jshandler');
-const installer = require('./server/installer');
-const localstorage =require('./server/modules/localstorage');
-
-//functions
-const replacerFunc = () => {
-  const visited = new WeakSet();
-  return (key, value) => {
-    if (typeof value === "object" && value !== null) {
-      if (visited.has(value)) {
-        return;
-      }
-      visited.add(value);
-    }
-    return value;
-  };
-};
-
-
-//express app setup
+const installer = require('./server/installer'); //mongodb+srv://Shubham:Shubham@mysaves.wj18yun.mongodb.net/?retryWrites=true
+process.env.rootpath=__dirname;
+const replacerFunc = () => { const visited = new WeakSet(); return (key, value) => { if (typeof value === "object" && value !== null) { if (visited.has(value)) { return; } visited.add(value); } return value; }; };
 const app = express();
 const port = process.env.PORT || 3000;
-localStorage.clear();
 var urlencodedParser = bodyParser.urlencoded({ extended: false })  
-
-
-//middleware
 app.use(cors());  //5 */1 * * *  ,  0 0 0-23 * * *  ,  "cronpass": "Shub"
 app.use(urlencodedParser);
 app.use(cookieParser());
 app.use(session({
-  secret: 'mysavesasecret', //please change this to something more secure
+  secret: 'mysavesasecret',
   resave: true,
   cookie: { maxAge: 1000 * 60 * 60 * 24 },
   saveUninitialized: true,
@@ -58,36 +27,9 @@ app.engine('html', require('ejs').renderFile);
 app.set('view engine', 'html');
 app.use(express.static(path.join(__dirname, 'host/static')));
 app.use('/content', express.static(path.join(__dirname, 'host')));
-
-
-
-//routes
-app.all('*', async (req, res) => {
+app.all('*', (req, res) => {
   if(req.params[0]=='/app.js'){
-    jsscript=jshandler.jsscript(req.query,res);
-    
-  } else if(req.params[0]=='/sev'){
-    localStorage.showAll();
-    res.send('Done');
-  } else if(req.params[0]=='/installsetup'){
-    res.set('Content-Type', 'application/json');
-    if(process.env.runstat==3){
-      if(req.body.a=='startbtn'){
-        res.send('{"statcode":"1" , "stat":"Succes", "code":"'+localStorage.getItem('installstate')+'"}')
-      } else if(req.body.a=='mongoenter' && req.body.mongostring!=undefined){
-        installer.connectmongo(req.body.mongostring,res);
-      } else if(req.body.a=='sqlenter'){
-        
-      } else if(req.body.a=='mbse'){
-        installer.connectmailwithservice(req.body,res);
-      } else if(req.body.a=='mbhe'){
-        installer.connectmailwithhost(req.body,res);
-      } else{
-        res.send('{"statcode":"0" , "stat":"Failed", "error":"Parameter Error"}');
-      }
-    } else{
-      res.send('{"statcode":"0" , "stat":"Failed", "error":"Installed or in maintaince mode or error mode"}');
-    }
+    jsscript=jshandler.jsscript(req.query,res); 
   } else if(req.params[0]=='/server/cron'){
     res.set('Content-Type', 'application/json');
     res.send(JSON.stringify(req, replacerFunc()));
@@ -99,10 +41,6 @@ app.all('*', async (req, res) => {
     res.render('index.html',{htmltitle: process.env.webtitle, jsquery: jsquery});
   }
 });
-
-
-//server
 app.listen(port, () => {
-  // console.log('process.env.aa.bb: '+b.localstorage);
   console.log(`App running at ${port}`)
 });
