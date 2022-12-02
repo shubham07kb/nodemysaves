@@ -1,12 +1,12 @@
 const fs=require('fs');
 const path=require('path');
 function jsquery(){
-  return '?l=ah';
+  return '?jsfile=app';
 }
 function jsscript(query,res){
     p='';
-    if(query.jsfile=='install'){
-      p+=fs.readFileSync('./host/js/install.js');
+    if(query.jsfile=='app'){
+      p+=fs.readFileSync('./host/js/app.js');
     } else if(query.jsfile=='ext'){
       p+=fs.readFileSync('./host/js/ext.js');
     }

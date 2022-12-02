@@ -1,1 +1,0 @@
-document.getElementById('main').innerHTML='<a href="/aaaq">znjszj</a>';

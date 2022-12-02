@@ -3,7 +3,7 @@
         "name" : "MySaves",
         "version" : "0.0.0 beta hax",
         "description" : "CMS",
-        "author" : "Shubham",
+        "creator" : "Shubham",
         "email" : "kumarbansal.shubham07@gmail.com"
     },
     "db":{
@@ -11,6 +11,7 @@
         "mongostring" : "mongodb+srv://Shubham:Shubham@mysaves.wj18yun.mongodb.net/?retryWrites=true"
     },
     "email":{
+        "type" : "host",
         "host" : "smtp.gmail.com",
         "port" : 587,
         "email" : "web@mysaves.live",
@@ -19,5 +20,10 @@
             "pass" : "wojjdxyusycttmwf"
         }
     },
-    "session-key" : "fdttf7tb6dbgfv"
+    "security_keys" : {
+        "session_key" : "fdttf7tb6dbgfv",
+        "sec_cookies_method" : "sha256",
+        "secure_transfer_encrypt_key" : "bshb76tfvsyg",
+        "jwt_key" : "hbhg7ryvyfGvYGV67gb"
+    }
 }
