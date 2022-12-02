@@ -34,15 +34,20 @@ app.use(express.static(path.join(__dirname, 'host/static')));
 app.use('/content', express.static(path.join(__dirname, 'host')));
 
 app.all('*', (req, res) => {
-  if(req.params[0]=='/app.js'){
-    jsscript=jshandler.jsscript(req.query,res); 
-  } else if(req.params[0]=='/server/cron'){
-    res.set('Content-Type', 'application/json');
-    res.send(JSON.stringify(req, replacerFunc()));
-  } else if(req.params[0]=='/server/req'){
-    res.set('Content-Type', 'application/json');
-    res.send(JSON.stringify(req, replacerFunc()));
-  } else{
+  appparams=req.params[0].split('/');
+  appparams.shift();
+  if(appparams[0]=='app.js' || (appparams[0]=='server' && (appparams[1]=='cron' || appparams[1]=='req'))){
+    if(appparams[0]=='app.js'){
+      jsscript=jshandler.jsscript(req.query,res);
+    } else if(appparams[0]=='server'){
+      res.set('Content-Type', 'application/json');
+      if(appparams[1]=='cron'){
+        res.send(JSON.stringify(req, replacerFunc()));
+      } else if(appparams[1]=='req'){
+        res.send(JSON.stringify(req, replacerFunc()));
+      }
+    }
+  } else {
     jsquery=jshandler.jsquery(res);
     res.render('index.html',{htmltitle: process.env.title, jsquery: jsquery});
   }

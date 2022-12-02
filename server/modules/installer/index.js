@@ -27,7 +27,7 @@ function install(file){
             } else if(config.db.type=='mongo'){
                 if(config.db.mongostring!=undefined && (config.db.mongostring.startsWith('mongodb://') || config.db.mongostring.startsWith('mongodb+srv://'))){
                     process.env.mongostring=config.db.mongostring;
-                    MongoClient.connect(process.env.mongostring, function(err, db) {if(err){ throw new "Error, Not able to connect, Please check your mongostring in db->mongostring";} console.log('DB setup complete');db.close();});
+                    // MongoClient.connect(process.env.mongostring, function(err, db) {if(err){ throw new "Error, Not able to connect, Please check your mongostring in db->mongostring";} console.log('DB setup complete');db.close();});
                 } else{
                     throw new Error('db is missing mongostring for type mongo');
                 }
@@ -82,7 +82,7 @@ function install(file){
                 subject: 'Sending Email To check if email is working',
                 text: 'Hi! There, Your mail setup is done and working fine. You can now use this email to send emails from your app.'
             };
-            transporter.sendMail(mailConfigurations, function(error, info){if (error) throw Error(error);console.log('Email setup complete');});
+            // transporter.sendMail(mailConfigurations, function(error, info){if (error) throw Error(error);console.log('Email setup complete');});
         } else{
             throw new Error('email type is not supported');
         }
