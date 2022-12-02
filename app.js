@@ -36,9 +36,10 @@ app.use('/content', express.static(path.join(__dirname, 'host')));
 app.all('*', (req, res) => {
   appparams=req.params[0].split('/');
   appparams.shift();
+  reqhostname="https://"+req.hostname;
   if(appparams[0]=='app.js' || (appparams[0]=='server' && (appparams[1]=='cron' || appparams[1]=='req'))){
     if(appparams[0]=='app.js'){
-      jsscript=jshandler.jsscript(req.query,res);
+      jsscript=jshandler.jsscript(req.query,res,reqhostname);
     } else if(appparams[0]=='server'){
       res.set('Content-Type', 'application/json');
       if(appparams[1]=='cron'){
