@@ -4,12 +4,21 @@ function jsquery() {
   return '?jsfile=app';
 }
 function jsscript(query, res, host) {
-  p = "appcss='"+fs.readFileSync(path.join(process.env.rootpath+"/host/css/app.css"))+"';applightcss='"+fs.readFileSync(path.join(process.env.rootpath+"/host/css/app.light.css"))+"';appdarkcss='"+fs.readFileSync(path.join(process.env.rootpath+"/host/css/app.dark.css"))+"';webcss='"+fs.readFileSync(path.join(process.env.rootpath+"/host/css/web.css"))+"';weblightcss='"+fs.readFileSync(path.join(process.env.rootpath+"/host/css/web.light.css"))+"';webdarkcss='"+fs.readFileSync(path.join(process.env.rootpath+"/host/css/web.dark.css"))+"';acccss='"+fs.readFileSync(path.join(process.env.rootpath+"/host/css/acc.css"))+"';acclightcss='"+fs.readFileSync(path.join(process.env.rootpath+"/host/css/acc.light.css"))+"';accdarkcss='"+fs.readFileSync(path.join(process.env.rootpath+"/host/css/acc.dark.css"))+"';";
+  appcss=fs.readFileSync(path.join(process.env.rootpath+"/host/css/app.min.css"));
+  applightcss=fs.readFileSync(path.join(process.env.rootpath+"/host/css/app.light.min.css"));
+  appdarkcss=fs.readFileSync(path.join(process.env.rootpath+"/host/css/app.dark.min.css"));
+  webcss=fs.readFileSync(path.join(process.env.rootpath+"/host/css/web.min.css"));
+  weblightcss=fs.readFileSync(path.join(process.env.rootpath+"/host/css/web.light.min.css"));
+  webdarkcss=fs.readFileSync(path.join(process.env.rootpath+"/host/css/web.dark.min.css"));
+  acccss=fs.readFileSync(path.join(process.env.rootpath+"/host/css/acc.min.css"));
+  acclightcss=fs.readFileSync(path.join(process.env.rootpath+"/host/css/acc.light.min.css"));
+  accdarkcss=fs.readFileSync(path.join(process.env.rootpath+"/host/css/acc.dark.min.css"));
+  p = "appcss=`"+appcss+"`;applightcss=`"+applightcss+"`;appdarkcss=`"+appdarkcss+"`;webcss=`"+webcss+"`;weblightcss=`"+weblightcss+"`;webdarkcss=`"+webdarkcss+"`;acccss=`"+acccss+"`;acclightcss=`"+acclightcss+"`;accdarkcss=`"+accdarkcss+"`;";
   if (query.jsfile == 'app') {
-    p += fs.readFileSync('./host/js/app.js');
+    p += fs.readFileSync('./host/js/app.min.js');
   } else if (query.jsfile == 'ext') {
     p += "appurl='" + host + "';";
-    p += fs.readFileSync('./host/js/app.js');
+    p += fs.readFileSync('./host/js/app.min.js');
   }
   res.set('Content-Type', 'text/javascript');
   res.send(p);

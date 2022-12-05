@@ -9,9 +9,10 @@ const bodyParser     = require('body-parser');
 const bcrypt         = require("bcryptjs");
 const jshandler      = require('./server/modules/jshandler');
 const installer      = require('./server/modules/installer');
+const minify         = require('./server/modules/minify');
 process.env.rootpath=__dirname;
 
-installer.install('config.json');                     // console.log(JSON.stringify(process.env, null, 4));
+installer.install('config.json');
 
 const replacerFunc   = ()=>{const visited=new WeakSet();return (key, value)=>{if(typeof value==="object" && value!==null){if(visited.has(value)){return;}visited.add(value);}return value;};};
 const app            = express();
@@ -43,9 +44,12 @@ app.all('*', (req, res) => {
   appparams=req.params[0].split('/');
   appparams.shift();
   reqhostname="https://"+req.hostname;
-  if(appparams[0]=='app.js' || (appparams[0]=='server' && (appparams[1]=='cron' || appparams[1]=='req'))){
+  if(appparams[0]=='app.js' || (appparams[0]=='server' && (appparams[1]=='cron' || appparams[1]=='req')) || appparams[0]=='minify'){
     if(appparams[0]=='app.js'){
       jsscript=jshandler.jsscript(req.query,res,reqhostname);
+    } else if(appparams[0]=='minify'){
+      minify.doing();
+      res.send('Minify done');
     } else if(appparams[0]=='server'){
       res.set('Content-Type', 'application/json');
       if(appparams[1]=='cron'){
@@ -56,7 +60,7 @@ app.all('*', (req, res) => {
     }
   } else {
     jsquery=jshandler.jsquery(res);
-    res.render('index.html',{htmltitle: process.env.title, jsquery: jsquery});
+    res.render('index.min.html',{htmltitle: process.env.title, jsquery: jsquery});
   }
 });
 
