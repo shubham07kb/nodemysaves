@@ -10,6 +10,7 @@ const bcrypt         = require("bcryptjs");
 const jshandler      = require('./server/modules/jshandler');
 const installer      = require('./server/modules/installer');
 const minify         = require('./server/modules/minify');
+const prepage         = require('./server/api/prepage');
 process.env.rootpath=__dirname;
 
 installer.install('config.json');
@@ -44,7 +45,7 @@ app.all('*', (req, res) => {
   appparams=req.params[0].split('/');
   appparams.shift();
   reqhostname="https://"+req.hostname;
-  if(appparams[0]=='app.js' || (appparams[0]=='server' && (appparams[1]=='cron' || appparams[1]=='req')) || appparams[0]=='minify'){
+  if(appparams[0]=='app.js' || (appparams[0]=='api' && (appparams[1]=='prepage' && (appparams[2]=='html' || appparams[2]=='meta') && appparams[3]!='' && appparams[3]!=undefined)) || (appparams[0]=='server' && (appparams[1]=='cron' || appparams[1]=='req')) || appparams[0]=='minify'){
     if(appparams[0]=='app.js'){
       jsscript=jshandler.jsscript(req.query,res,reqhostname);
     } else if(appparams[0]=='minify'){
@@ -56,6 +57,14 @@ app.all('*', (req, res) => {
         res.send(JSON.stringify(req, replacerFunc()));
       } else if(appparams[1]=='req'){
         res.send(JSON.stringify(req, replacerFunc()));
+      }
+    } else if(appparams[0]=='api'){
+      if(appparams[1]=='prepage'){
+        if(appparams[2]=='html'){
+          prepage.html(appparams[3],req,res);
+        } else if(appparams[2]=='meta'){
+          prepage.meta(appparams[3],req,res);
+        }
       }
     }
   } else {

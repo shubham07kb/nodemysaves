@@ -13,7 +13,7 @@ function jsscript(query, res, host) {
   acccss=fs.readFileSync(path.join(process.env.rootpath+"/host/css/acc.min.css"));
   acclightcss=fs.readFileSync(path.join(process.env.rootpath+"/host/css/acc.light.min.css"));
   accdarkcss=fs.readFileSync(path.join(process.env.rootpath+"/host/css/acc.dark.min.css"));
-  p = "appcss=`"+appcss+"`;applightcss=`"+applightcss+"`;appdarkcss=`"+appdarkcss+"`;webcss=`"+webcss+"`;weblightcss=`"+weblightcss+"`;webdarkcss=`"+webdarkcss+"`;acccss=`"+acccss+"`;acclightcss=`"+acclightcss+"`;accdarkcss=`"+accdarkcss+"`;";
+  p = "sitename=`"+process.env.title+"`; appcss=`"+appcss+"`;applightcss=`"+applightcss+"`;appdarkcss=`"+appdarkcss+"`;webcss=`"+webcss+"`;weblightcss=`"+weblightcss+"`;webdarkcss=`"+webdarkcss+"`;acccss=`"+acccss+"`;acclightcss=`"+acclightcss+"`;accdarkcss=`"+accdarkcss+"`;";
   if (query.jsfile == 'app') {
     p += fs.readFileSync('./host/js/app.min.js');
   } else if (query.jsfile == 'ext') {
