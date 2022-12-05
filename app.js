@@ -32,8 +32,14 @@ app.engine('html', require('ejs').renderFile);
 app.set('view engine', 'html');
 app.use(express.static(path.join(__dirname, 'host/static')));
 app.use('/content', express.static(path.join(__dirname, 'host')));
+app.set('trust proxy', ['loopback', 'linklocal', 'uniquelocal'])
 
 app.all('*', (req, res) => {
+  if(typeof req.headers['cf-connecting-ip']=='undefined'){
+    ip=req.ip;
+  } else {
+    ip=req.headers['cf-connecting-ip'];
+  }
   appparams=req.params[0].split('/');
   appparams.shift();
   reqhostname="https://"+req.hostname;
