@@ -11,6 +11,7 @@ const jshandler      = require('./server/modules/jshandler');
 const installer      = require('./server/modules/installer');
 const minify         = require('./server/modules/minify');
 const prepage         = require('./server/api/prepage');
+const ip         = require('./server/api/ip');
 process.env.rootpath=__dirname;
 
 installer.install('config.json');
@@ -37,15 +38,10 @@ app.use('/content', express.static(path.join(__dirname, 'host')));
 app.set('trust proxy', ['loopback', 'linklocal', 'uniquelocal'])
 
 app.all('*', (req, res) => {
-  if(typeof req.headers['cf-connecting-ip']=='undefined'){
-    ip=req.ip;
-  } else {
-    ip=req.headers['cf-connecting-ip'];
-  }
   appparams=req.params[0].split('/');
   appparams.shift();
   reqhostname="https://"+req.hostname;
-  if(appparams[0]=='app.js' || (appparams[0]=='api' && (appparams[1]=='prepage' && (appparams[2]=='html' || appparams[2]=='meta') && appparams[3]!='' && appparams[3]!=undefined)) || (appparams[0]=='server' && (appparams[1]=='cron' || appparams[1]=='req')) || appparams[0]=='minify'){
+  if(appparams[0]=='app.js' || (appparams[0]=='api' && ((appparams[1]=='prepage' && (appparams[2]=='html' || appparams[2]=='meta') && appparams[3]!='' && appparams[3]!=undefined) || (appparams[1]=='get' && (appparams[2]=='ip' || (appparams[2]=='ipdata'))))) || (appparams[0]=='server' && (appparams[1]=='cron' || appparams[1]=='req')) || appparams[0]=='minify'){
     if(appparams[0]=='app.js'){
       jsscript=jshandler.jsscript(req.query,res,reqhostname);
     } else if(appparams[0]=='minify'){
@@ -65,7 +61,16 @@ app.all('*', (req, res) => {
         } else if(appparams[2]=='meta'){
           prepage.meta(appparams[3],req,res);
         }
+      } else if(appparams[1]=='get'){
+        if(appparams[2]=='ip'){
+          res.header('Content-Type', 'application/json');
+          res.send(ip.getip(req));
+        } else if(appparams[2]=='ipdata'){
+          ip.ipdata(req,res);
+        }
       }
+    } else{
+      res.send('Not found');
     }
   } else {
     jsquery=jshandler.jsquery(res);

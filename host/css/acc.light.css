@@ -1,1 +1,12 @@
-/* acc light */
+/* acc light */ 
+:root{
+    --background-color-main: rgb(228, 229, 247);
+    --card-color: #fff;
+    --social-login-color: #fff;
+    --social-login-border-color: rgb(245 239 239);
+    --social-login-text-color: #000;
+    --or-color: #000;
+    --or-background: #fff;
+    --or-border-color: rgb(245 239 239);
+    --a-color: 	rgb(0, 0, 255);
+}
