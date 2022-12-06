@@ -7,11 +7,12 @@ const cors           = require('cors');
 const cookieParser   = require('cookie-parser');
 const bodyParser     = require('body-parser');
 const bcrypt         = require("bcryptjs");
+const compression    = require('compression');
 const jshandler      = require('./server/modules/jshandler');
 const installer      = require('./server/modules/installer');
 const minify         = require('./server/modules/minify');
-const prepage         = require('./server/api/prepage');
-const ip         = require('./server/api/ip');
+const prepage        = require('./server/api/prepage');
+const ip             = require('./server/api/ip');
 process.env.rootpath=__dirname;
 
 installer.install('config.json');
@@ -23,6 +24,7 @@ var urlencodedParser = bodyParser.urlencoded({ extended: false })
 
 app.use(cors());  //5 */1 * * *  ,  0 0 0-23 * * *  ,  "cronpass": "Shub"
 app.use(urlencodedParser);
+app.use(compression());
 app.use(cookieParser());
 app.use(session({
   secret: 'mysavesasecret',
