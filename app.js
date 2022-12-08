@@ -1,12 +1,12 @@
 const express        = require('express');
+const cors           = require('cors');
 const app            = express();
-const http           = require('http').Server(app);
-const io             = require('socket.io')(http);
+const http           = require('http').createServer(app);
+const io             = require('socket.io')(http,{cors:{origin: "*",methods: ["GET", "POST"]}});
 const fs             = require('fs');
 const path           = require('path');
 const os             = require('os');
 const session        = require('express-session');
-const cors           = require('cors');
 const cookieParser   = require('cookie-parser');
 const bodyParser     = require('body-parser');
 const bcrypt         = require("bcryptjs");
@@ -31,6 +31,16 @@ app.set('view engine', 'html');
 app.use(express.static(path.join(__dirname, 'host/static')));
 app.use('/content', express.static(path.join(__dirname, 'host')));
 app.set('trust proxy', ['loopback', 'linklocal', 'uniquelocal'])
+app.use(cors());  //5 */1 * * *  ,  0 0 0-23 * * *  ,  "cronpass": "Shub"
+app.use(urlencodedParser);
+app.use(compression());
+app.use(cookieParser());
+app.use(session({
+  secret: 'mysavesasecret',
+  resave: true,
+  cookie: { maxAge: 1000 * 60 * 60 * 24 },
+  saveUninitialized: true,
+}));
 
 app.all('*', (req, res) => {
   appparams=req.params[0].split('/');
@@ -73,17 +83,12 @@ app.all('*', (req, res) => {
   }
 });
 
-io.on('connection', (socket) => {});
-app.use(cors());  //5 */1 * * *  ,  0 0 0-23 * * *  ,  "cronpass": "Shub"
-app.use(urlencodedParser);
-app.use(compression());
-app.use(cookieParser());
-app.use(session({
-  secret: 'mysavesasecret',
-  resave: true,
-  cookie: { maxAge: 1000 * 60 * 60 * 24 },
-  saveUninitialized: true,
-}));
+io.on('connection', (socket) => {
+  console.log('a user connected');
+  socket.on('disconnect', () => {
+    console.log('user disconnected');
+  });
+});
 
 http.listen(port, () => {
   console.log(`App running at ${port}`)

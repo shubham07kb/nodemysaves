@@ -104,6 +104,10 @@ function route(){
     }
   }
 }
+socket="";
+function socketconnect(){
+    socket=io();
+}
 function endloader(){gebi('loader').innerHTML='';gebi('loaderstyle').innerHTML='';}
-function app(){httpscheck();ipform();presetup();theme();tools();route();endloader();}
+function app(){httpscheck();ipform();socketconnect();presetup();theme();tools();route();endloader();}
 try{app();}catch(e){gebi("starterror").innerHTML="Error: "+e;endloader();}
