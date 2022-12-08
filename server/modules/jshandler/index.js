@@ -19,7 +19,7 @@ function jsscript(query, res, host) {
     p += fs.readFileSync('./host/js/app.min.js');
   } else if (query.jsfile == 'ext') {
     p += "appurl='" + host + "';";
-    p += fs.readFileSync('./host/js/app.min.js');
+    p += fs.readFileSync('./host/js/ext.min.js');
   }
   res.set('Content-Type', 'text/javascript');
   res.send(p);
