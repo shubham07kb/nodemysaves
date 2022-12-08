@@ -11,6 +11,7 @@ function getprehtml(a){const xhr1=new XMLHttpRequest(); const xhr2=new XMLHttpRe
 function ps(a,b=sitename){
   let stateObj={id:"100"};
   window.history.pushState(stateObj, b, a);
+  route();
 }
 function getapphtml(a){
   const xhr1=new XMLHttpRequest();

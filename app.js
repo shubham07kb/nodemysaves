@@ -46,7 +46,9 @@ app.all('*', (req, res) => {
   appparams=req.params[0].split('/');
   appparams.shift();
   reqhostname="https://"+req.hostname;
-  if(appparams[0]=='app.js'){
+  if(appparams[0]=='mo'){
+    res.send(reqhostname);
+  }if(appparams[0]=='app.js'){
     jsscript=jshandler.jsscript(req.query,res,reqhostname);
   } else if(appparams[0]=='minify'){
     minify.doing();
