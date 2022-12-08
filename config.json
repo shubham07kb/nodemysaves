@@ -8,7 +8,8 @@
     },
     "db":{
         "type" : "mongo",
-        "mongostring" : "mongodb+srv://Shubham:Shubham@mysaves.wj18yun.mongodb.net/?retryWrites=true"
+        "mongostring" : "mongodb+srv://Shubham:Shubham@mysaves.wj18yun.mongodb.net/?retryWrites=true",
+        "dbname" : "mysaves"
     },
     "email":{
         "type" : "host",

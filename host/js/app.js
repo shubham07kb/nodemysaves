@@ -8,6 +8,10 @@ function loadurldata(){var urldata=[];urldata['url']=window.location.href;urldat
 function presetup(){const metape=document.createElement("meta");metape.id="themec";metape.name="themec";metape.content="unset";const cssel=document.createElement("style");cssel.id='stylesheet';document.head.appendChild(metape);document.head.appendChild(cssel);}
 function tools(){toolsp='';gebi('tools').innerHTML=toolsp;}
 function getprehtml(a){const xhr1=new XMLHttpRequest(); const xhr2=new XMLHttpRequest();xhr1.open('GET','/api/prepage/meta/'+a);xhr2.open('GET','/api/prepage/html/'+a);xhr1.send();xhr2.send();onRequestsComplete([xhr1,xhr2],function(requests,unsuccessful){if(unsuccessful){cl('Error: '+unsuccessful[0].status+' '+unsuccessful[0].statusText);} else{metapp=JSON.parse(requests[0].responseText);gebi("headkeywords").content=metapp.keywords;gebi("headdescription").content=metapp.desc;gebi('headauthor').content=metapp.author;gebi("headtitle").innerHTML=metapp.title+" - "+sitename;gebi('main').innerHTML=requests[1].responseText;}});}
+function ps(a,b=sitename){
+  let stateObj={id:"100"};
+  window.history.pushState(stateObj, b, a);
+}
 function getapphtml(a){
   const xhr1=new XMLHttpRequest();
   const xhr2=new XMLHttpRequest();
@@ -52,6 +56,14 @@ function getdashhtml(a){
     }
   });
 }
+async function getshortlink(a){
+  p=await fetch('/api/shortlink/'+a).then(response=>response.json());
+  if(p.status=='success'){
+    window.location.href=p.url;
+  } else{
+    nf();
+  }
+}
 function route(){
   const udata=loadurldata();
   console.table(udata);
@@ -69,6 +81,24 @@ function route(){
     if(gebi('themec').innerHTML!='web'){gebi('themec').content='web';changetheme();}
     if(udata.urlpna[0]==''){
       getprehtml('home');
+    } else if(udata.urlpna[0]=='blog'){
+      getbloghtml(udata.urlpna[1]);
+    } else if(udata.urlpna[0]=='collection'){
+      getcolhtml(udata.urlpna[1]);
+    } else if(udata.urlpna[0]=='project'){
+      getprohtml(udata.urlpna[1]);
+    } else if(udata.urlpna[0]=='s'){
+      getshortlink(udata.urlpna[1]);
+    } else if(udata.urlpna[0]=='p'){
+      a=udata.urlpn.replace('/p/','');
+      if(a.startsWith('http://') || a.startsWith('https://')){
+        aa=a+udata.urlse;
+      } else if(a.startsWith('?'||'/')){
+        aa='https://'+window.location.hostname+a+udata.urlse;
+      } else{
+        aa='https://'+a+udata.urlse;
+      }
+      window.location.href=aa;
     } else{
       getprehtml(udata.urlpna[0]);
     }

@@ -25,8 +25,9 @@ function install(file) {
       if (config.db.type == 'mysql') {
 
       } else if (config.db.type == 'mongo') {
-        if (config.db.mongostring != undefined && (config.db.mongostring.startsWith('mongodb://') || config.db.mongostring.startsWith('mongodb+srv://'))) {
+        if (config.db.mongostring != undefined && (config.db.mongostring.startsWith('mongodb://') || config.db.mongostring.startsWith('mongodb+srv://')) && config.db.dbname!=undefined && config.db.dbname!=''){
           process.env.mongostring = config.db.mongostring;
+          process.env.dbname = config.db.dbname;
           // MongoClient.connect(process.env.mongostring, function(err, db) {if(err){ throw new "Error, Not able to connect, Please check your mongostring in db->mongostring";} console.log('DB setup complete');db.close();});
         } else {
           throw new Error('db is missing mongostring for type mongo');

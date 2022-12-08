@@ -1,30 +1,10 @@
 MongoClient = require('mongodb').MongoClient;
-
-function connectshow() {
-  MongoClient.connect(url, function (err, db) {
-    if (err) throw err;
-    dbo = db.db("mysaves");
-    return { dbo, db };
-  });
+async function query(a,b,c,d){
+  var url = c;
+  var db = await MongoClient.connect(url);
+  var dbo =await db.db(d);
+  return await dbo.collection(a).find(b).toArray();
 }
-
-function display(dbo) {
-  console.log('displaying');
-  dbo.collection("customers").findOne({}, function (err, result) {
-    if (err) throw err;
-    console.log(result.name);
-  });
-}
-
-
-function dbclose(db) {
-  console.log('closing');
-  db.close();
-}
-
 module.exports = {
-  'connect': connectshow,
-  'display': display,
-  'close': dbclose,
-  'dbnamewala': 'mysaves'
+  query: query
 };
