@@ -90,8 +90,15 @@ io.on('connection', (socket) => {
   socket.on('disconnect', () => {
     console.log('user disconnected');
   });
+  socket.on('chat message', (msg) => {
+    io.emit('chat message', msg);
+  });
+  // setInterval(function(){
+  //   socket.emit('ping');
+  //   console.log('ping');
+  // }, 5000);
 });
 
 http.listen(port, () => {
-  console.log(`App running at ${port}`)
+  console.log(`App running at ${port}`);
 });
