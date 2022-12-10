@@ -24,8 +24,17 @@ async function del(prc,a,b){
     
   }
 }
+async function update(prc,a,b,c){
+  const dbtype = prc.dbtype;
+  if (dbtype == 'mongo') {
+    return await mongo.update(a,b,c,prc.mongostring,prc.dbname);
+  } else if (dbtype == 'mysql'){
+    
+  }
+}
 module.exports = {
   query: query,
   insert: insert,
-  del: del
+  del: del,
+  update: update
 }

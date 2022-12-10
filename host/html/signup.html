@@ -25,9 +25,11 @@
    </div>
    <input type="button" class="cta-btn" onclick="createacc()" value="Create Account">
 </form>
-<div style="display:none;">
-   <h2 class="title"> Sign Up</h2>
-   <p class="subtitle">Did'nt revieve? <a onclick="ps('/login')"> Request new OTP</a></p>
-   <label for="username"> <b>Username</b></label>
-   <input class="input-field" id="username" type="text" placeholder="Enter Username" name="username" required>
+<div style="display:none;" id="accext">
+   <div style="display:none;" id="regemail"></div>
+   <h2 class="title">OTP</h2>
+   <p class="subtitle">Did'nt revieve? <a onclick="regnewotp()"> Request new OTP</a></p>
+   <label for="otp"> <b>OTP</b></label>
+   <input class="input-field" id="otp" type="text" placeholder="Enter OTP" name="otp" required>
+   <input type="button" class="cta-btn" onclick="verifuacc()" value="Verify">
 </div>

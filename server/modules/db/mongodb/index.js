@@ -24,8 +24,19 @@ async function del(a,b,c,d){
     return {status:'error',statcode:0,message:e};
   }
 }
+async function update(a,b,c,d,e){
+  var db = await MongoClient.connect(d);
+  var dbo =await db.db(e);
+  try{
+    var r=await dbo.collection(a).updateOne(c,{$set:b});
+    return {status:'success',statcode:1,message:r};
+  } catch(e){
+    return {status:'error',statcode:0,message:e};
+  }
+}
 module.exports = {
   query: query,
   insert: insert,
-  del: del
+  del: del,
+  update: update
 };

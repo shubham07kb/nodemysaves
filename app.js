@@ -2,7 +2,7 @@ const express        = require('express');
 const cors           = require('cors');
 const app            = express();
 const http           = require('http').createServer(app);
-const io             = require('socket.io')(http,{cors:{origin: "*",methods: ["GET", "POST"]}});
+const io             = require('socket.io')(http,{cors:{origin: "*",methods: ["GET", "POST", "PUT"]}});
 const fs             = require('fs');
 const path           = require('path');
 const os             = require('os');
@@ -18,6 +18,10 @@ const ip             = require('./server/api/ip');
 const short          = require('./server/api/shortlink');
 const account        = require('./server/acc');
 process.env.rootpath=__dirname;
+const uuid=require('uuid');
+// for(let i=0;i<os.cpus().length;i++){ 
+//   console.log('CPU'+i+' : '+os.cpus()[i].model);
+//  }
 
 installer.install('config.json');
 
@@ -34,15 +38,15 @@ app.set('trust proxy', ['loopback', 'linklocal', 'uniquelocal'])
 app.use(cors());  //5 */1 * * *  ,  0 0 0-23 * * *  ,  "cronpass": "Shub"
 app.use(urlencodedParser);
 app.use(compression());
-app.use(cookieParser());
+app.use(cookieParser(httpOnly=false));
 app.use(session({
-  secret: 'mysavesasecret',
+  secret: process.env.session_key,
   resave: true,
   cookie: { maxAge: 1000 * 60 * 60 * 24 },
   saveUninitialized: true,
 }));
 
-app.all('*', (req, res) => {
+async function apphandle(req,res){
   appparams=req.params[0].split('/');
   appparams.shift();
   reqhostname="https://"+req.hostname;
@@ -85,6 +89,9 @@ app.all('*', (req, res) => {
     jsquery=jshandler.jsquery(res);
     res.render('index.min.html',{htmltitle: process.env.title, jsquery: jsquery});
   }
+}
+app.all('*', (req, res) => {
+  apphandle(req,res);
 });
 
 io.on('connection', (socket) => {
@@ -95,10 +102,6 @@ io.on('connection', (socket) => {
   socket.on('chat message', (msg) => {
     io.emit('chat message', msg);
   });
-  // setInterval(function(){
-  //   socket.emit('ping');
-  //   console.log('ping');
-  // }, 5000);
 });
 
 http.listen(port, () => {
