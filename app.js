@@ -9,7 +9,6 @@ const os             = require('os');
 const session        = require('express-session');
 const cookieParser   = require('cookie-parser');
 const bodyParser     = require('body-parser');
-const bcrypt         = require("bcryptjs");
 const compression    = require('compression');
 const jshandler      = require('./server/modules/jshandler');
 const installer      = require('./server/modules/installer');
@@ -17,6 +16,7 @@ const minify         = require('./server/modules/minify');
 const prepage        = require('./server/api/prepage');
 const ip             = require('./server/api/ip');
 const short          = require('./server/api/shortlink');
+const account        = require('./server/acc');
 process.env.rootpath=__dirname;
 
 installer.install('config.json');
@@ -75,10 +75,12 @@ app.all('*', (req, res) => {
         ip.ipdata(req,res);
       }
     } else if(appparams[1]=='shortlink'){
-      short.api(appparams[2],res,process);
+      short.api(appparams[2],res,process.env);
     }
+  } else if(appparams[0]=='acc'  && (appparams[1]=='respondacc')){
+    account.worker(req,res,process.env);
   } else if(appparams[0]=='s'){
-    short.direct(appparams[1],res,process);
+    short.direct(appparams[1],res,process.env);
   } else {
     jsquery=jshandler.jsquery(res);
     res.render('index.min.html',{htmltitle: process.env.title, jsquery: jsquery});
