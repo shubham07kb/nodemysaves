@@ -1,8 +1,8 @@
 function accjsrun() {
-
+    cl('accjsrun');
 }
 function accjsdes() {
-
+    cl('accjsdes');
 }
 function showorhidepswd() {
     let pt = gebi('pswd').getAttribute("type") === "password" ? "text" : "password";
@@ -30,9 +30,15 @@ function respondeacc(a,b){
                 } else if(b=='ga'){
                     removeAllCookie();
                     if(res.rm=='y'){setCookie('rmkey',res.rmk,30);}
-                    setCookie('_acc_header',res.token.header,30);
-                    setCookie('_acc_data',res.token.data,30);
-                    setCookie('_acc_key',res.token.key,30);
+                    setCookie('_acc_header',res.token.header,1);
+                    setCookie('_acc_data',res.token.data,1);
+                    setCookie('_acc_key',res.token.key,1);
+                    setCookie('_s_acc_header',res.token_S.header,1);
+                    setCookie('_s_acc_data',res.token_S.data,1);
+                    setCookie('_s_acc_key',res.token_S.key,1);
+                    setCookie('_c_acc_header',res.token_c.header,1);
+                    setCookie('_c_acc_data',res.token_c.data,1);
+                    setCookie('_c_acc_key',res.token_c.key,1);
                     ps('/app');
                     location.reload();
                 }
@@ -42,16 +48,14 @@ function respondeacc(a,b){
         }
     }
 }
-function createacc(){
-    respondeacc('email='+gebi('email').value+'&username='+ gebi('username').value+'&pswd='+gebi('pswd').value+'&forthe=ca','ca');
+function getrm(){
+    return gebi('remme').checked?'y':'n';
 }
-function getacc(){
-    if(gebi('remme').checked){
-        rmv='y';
-    } else {
-        rmv='n';
+function createacc(){
+    rmv=gebi('atc').checked?'y':'n';
+    if(rmv=='y'){
+    respondeacc('email='+gebi('email').value+'&username='+ gebi('username').value+'&fname='+gebi('fname').value+'&lname='+gebi('lname').value+'&pswd='+gebi('pswd').value+'&forthe=ca','ca');
     }
-    respondeacc('acceou='+gebi('eouf').value+'&pswd='+gebi('pswd').value+'&rm='+rmv+'&forthe=ga','ga');
 }
 function recacc(){
     respondeacc('email='+gebi('email').value+'&forthe=fa','fa');

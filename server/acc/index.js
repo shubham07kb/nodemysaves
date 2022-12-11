@@ -32,9 +32,11 @@ async function worker(req, res, prc) {
         q=await db.query(prc, 'users', q);
         if(q.length==1){
           if(bcrypt.compareSync(pswd, q[0].pswd)){
-            let jwtkey=prc.jwt_key;
             let mainid=q[0]._id;
-            let token=jwt.sign({ id: mainid },jwtkey,{algorithm:'HS256'});
+            all_user_json={id:mainid, email:q[0].email, username:q[0].username, fname:q[0].fname, lname:q[0].lname, role:q[0].role};
+            let token=jwt.sign({ id: mainid },prc.jwt_key,{algorithm:prc.jwt_key_method});
+            let token_s=jwt.sign(all_user_json,prc.jwt_s_key,{algorithm:prc.jwt_s_key_method});
+            let token_c=jwt.sign(all_user_json,prc.jwt_c_key,{algorithm:prc.jwt_c_key_method});
             if(rm=='y'){
               qrm=await db.query(prc, 'usersext', {uid:mainid});
               rm5=qrm[0].rms.r5;
@@ -45,7 +47,9 @@ async function worker(req, res, prc) {
               await db.insert(prc, 'rmkeys', {rm:rmkey, uid:mainid});
             } else {rmkey='';}
             token=token.split('.');
-            res.send({ status: 'success', statcode:1, message: 'Logged in.', token:{header:token[0],data:token[1],key:token[2]} , rm:rm, rmk:rmkey});
+            token_s=token_s.split('.');
+            token_c=token_c.split('.');
+            res.send({ status: 'success', statcode:1, message: 'Logged in.', token:{header:token[0],data:token[1],key:token[2]}, token_S:{header:token_s[0],data:token_s[1],key:token_s[2]}, token_c:{header:token_c[0],data:token_c[1],key:token_c[2]}, rm:rm, rmk:rmkey});
           } else {
             res.send({ status: 'error', statcode:0, message: 'Invalid request.' });
           }
@@ -68,21 +72,19 @@ async function worker(req, res, prc) {
         } else {
           if(qq[0].otp!=req.body.otp){
             if(qq[0].attempt>=2){
-              qq=db.del(prc, 'createuser', q);
+              qq=await db.del(prc, 'createuser', q);
               res.send({ status: 'error', statcode:0, message: 'Too many attempts.' });
             } else {
-              db.update(prc, 'createuser', {attempt:qq[0].attempt+1}, q);
+              await db.update(prc, 'createuser', {attempt:qq[0].attempt+1}, q);
               res.send({ status: 'error', statcode:0, message: 'Invalid OTP.' });
             }
           } else{
-            q={email:qq[0].email,username:qq[0].username,pswd:qq[0].pswd,role:'u'};
-            qq=await db.del(prc, 'createuser', q);
+            q={email:qq[0].email,username:qq[0].username,fname:qq[0].fname,lname:qq[0].lname,pswd:qq[0].pswd,role:'u'};
+            qq={email:qq[0].email};
+            qq=await db.del(prc, 'createuser', qq);
             q = await db.insert(prc, 'users', q);
             let uid=q.message.insertedId;
             q=await db.insert(prc, 'usersext', {uid:uid,rms:{r1:'',r2:'',r3:'',r4:'',r5:''}});
-            // p=JSON.stringify(q.message.insertedId).slice(1,-1);
-            // let jwtkey=prc.jwt_key;
-            // sjwt=jwt.sign({id:p},jwtkey,{algorithm:'HS512'});
             mail.sendMail(prc, qq.email, 'Welcome to the club!', 'Welcome to the club!');
             res.send({ status: 'success', statcode:1, message: 'Validated.'});
           }
@@ -94,9 +96,11 @@ async function worker(req, res, prc) {
       res.send({ status: 'error', statcode:0, message: 'Invalid request.' });
     }
   } else if (req.body.forthe == 'ca') {
-    if(req.body.email == '' || req.body.email == undefined || req.body.username == '' || req.body.username == undefined || req.body.pswd == '' || req.body.pswd == undefined){
+    if(req.body.email == '' || req.body.email == undefined || req.body.username == '' || req.body.username == undefined || req.body.pswd == '' || req.body.pswd == undefined || req.body.fname == '' || req.body.fname == undefined){
       res.send({ status: 'error', message: 'Invalid request.' });
     } else {
+      fname=req.body.fname.trim();
+      if(req.body.lname==undefined){lname='';} else{lname=req.body.lname.trim();}
       if(req.body.email.match(emailreg) && req.body.username.match(usernamereg) && req.body.pswd.match(pswdreg)){
         let q1={email:req.body.email};
         q1 = await db.query(prc, 'users', q1);
@@ -111,7 +115,7 @@ async function worker(req, res, prc) {
           q = await db.del(prc, 'createuser', q);
           const salt = await bcrypt.genSalt(10);
           const secPass = await bcrypt.hash(req.body.pswd, salt);
-          q={email:req.body.email,username:req.body.username,pswd:secPass,otp:otp,attempt:0};
+          q={email:req.body.email,username:req.body.username,fname:fname,lname:lname,pswd:secPass,otp:otp,attempt:0};
           p = await db.insert(prc, 'createuser', q);
           if(p.statcode==1){
             let mailbody = 'Your OTP is: ' + otp;

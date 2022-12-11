@@ -91,11 +91,17 @@ function install(file) {
     throw new Error('config is missing email object');
   }
   if (config.security_keys != undefined) {
-    if (config.security_keys.session_key != undefined && config.security_keys.sec_cookies_method != undefined && config.security_keys.secure_transfer_encrypt_key != undefined && config.security_keys.jwt_key != undefined) {
+    jwt_method_array=['HS256','HS384','HS512','RS256','RS384','RS512','ES256','ES384','ES512','PS256','PS384','PS512'];
+    if (config.security_keys.session_key != undefined && config.security_keys.sec_cookies_method != undefined && config.security_keys.secure_transfer_encrypt_key != undefined && config.security_keys.jwt_key != undefined && config.security_keys.jwt_key_method != undefined && config.security_keys.jwt_s_key != undefined && config.security_keys.jwt_s_key_method != undefined && config.security_keys.jwt_c_key != undefined && config.security_keys.jwt_c_key_method != undefined && jwt_method_array.includes(config.security_keys.jwt_key_method) && jwt_method_array.includes(config.security_keys.jwt_s_key_method) && jwt_method_array.includes(config.security_keys.jwt_c_key_method)) {
       process.env.session_key = config.security_keys.session_key;
       process.env.sec_cookies_method = config.security_keys.sec_cookies_method;
       process.env.secure_transfer_encrypt_key = config.security_keys.secure_transfer_encrypt_key;
       process.env.jwt_key = config.security_keys.jwt_key;
+      process.env.jwt_key_method = config.security_keys.jwt_key_method;
+      process.env.jwt_s_key = config.security_keys.jwt_s_key;
+      process.env.jwt_s_key_method = config.security_keys.jwt_s_key_method;
+      process.env.jwt_c_key = config.security_keys.jwt_c_key;
+      process.env.jwt_c_key_method = config.security_keys.jwt_c_key_method;
       console.log("Security keys setup complete");
     } else {
       throw new Error('security_keys is missing');
