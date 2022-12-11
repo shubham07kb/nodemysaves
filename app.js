@@ -50,9 +50,11 @@ async function apphandle(req,res){
   appparams=req.params[0].split('/');
   appparams.shift();
   reqhostname="https://"+req.hostname;
+  accdata=account.getaccount(req,process.env);
   if(appparams[0]=='mo'){
+    account.getaccount(req,process.env);
     res.send(reqhostname);
-  }if(appparams[0]=='app.js'){
+  } else if(appparams[0]=='app.js'){
     jsscript=jshandler.jsscript(req.query,res,reqhostname);
   } else if(appparams[0]=='minify'){
     minify.doing();

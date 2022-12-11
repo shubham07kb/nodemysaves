@@ -4,6 +4,9 @@ const { ObjectId } = require("mongodb");
 const uuid= require('uuid');
 const db = require('../modules/db');
 const mail = require('../modules/mail');
+emailreg = /\S+@\S+\.\S+/;
+usernamereg = '^[a-zA-Z0-9_]{3,20}$';
+pswdreg = '^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$';
 async function uniquerm(prc){
   let uuidv4=uuid.v4();
   q=await db.query(prc, 'rmkeys', {rm:uuidv4});
@@ -13,9 +16,18 @@ async function uniquerm(prc){
     return await uniquerm();
   }
 }
-emailreg = /\S+@\S+\.\S+/;
-usernamereg = '^[a-zA-Z0-9_]{3,20}$';
-pswdreg = '^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$';
+async function getaccount(req,prc){
+  if(req.cookies._s_acc_header!=undefined && req.cookies._s_acc_data!=undefined && req.cookies._s_acc_key!=undefined && req.cookies._s_acc_header!='' && req.cookies._s_acc_data!='' && req.cookies._s_acc_key!=''){
+    header=req.cookies._s_acc_header;
+    data=req.cookies._s_acc_data;
+    key=req.cookies._s_acc_key;
+    sjwt=prc.jwt_s_key;
+    try{rjwt=jwt.verify(header+'.'+data+'.'+key,sjwt);}catch(e){rjwt=null;}
+    if(rjwt!=null){
+      q=await db.query(prc, 'users', {_id:ObjectId(rjwt.id)});
+    }
+  }
+}
 async function worker(req, res, prc) {
   res.header('Content-Type', 'application/json');
   if (req.body.forthe == 'ga') {
@@ -138,10 +150,7 @@ async function worker(req, res, prc) {
     res.send({ status: 'error', statcode:0, message: 'Invalid request.' });
   }
 }
-function applier() {
-
-}
 module.exports = {
   worker: worker,
-  applier: applier
+  getaccount: getaccount
 }

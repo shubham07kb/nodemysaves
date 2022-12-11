@@ -13,13 +13,13 @@ function meta(page,req,res){
 }
 function html(page,req,res){
     if(page=='home'){
-        res.send(fs.readFileSync('./host/html/home.min.html'));
+        res.send(fs.readFileSync('./host/html/web/home.min.html'));
     } else if(page=='signup' || page=='register'){
-        res.send(fs.readFileSync('./host/html/signup.min.html'));
+        res.send(fs.readFileSync('./host/html/acc/signup.min.html'));
     } else if(page=='signin' || page=='login'){
-        res.send(fs.readFileSync('./host/html/signin.min.html'));
+        res.send(fs.readFileSync('./host/html/acc/signin.min.html'));
     } else if(page=='forgot'){
-        res.send(fs.readFileSync('./host/html/forgot.min.html')); 
+        res.send(fs.readFileSync('./host/html/acc/forgot.min.html')); 
     }
 } 
 module.exports={

@@ -1,0 +1,36 @@
+main
+├───host
+│   ├───css
+│   │   ├───acc
+│   │   ├───app
+│   │   └───web
+│   ├───html
+│   │   ├───acc
+│   │   ├───app
+│   │   └───web
+│   ├───img
+│   │   ├───icon
+│   │   └───web
+│   ├───js
+│   │   ├───acc
+│   │   ├───app
+│   │   ├───lib
+│   │   └───web
+│   └───static
+└───server
+    ├───acc
+    ├───api
+    │   ├───ip
+    │   ├───prepage
+    │   └───shortlink
+    └───modules
+        ├───countrysvg
+        │   └───svg
+        ├───db
+        │   ├───mongodb
+        │   └───mysql
+        ├───installer
+        ├───jshandler
+        ├───mail
+        ├───minify
+        └───worlddata
