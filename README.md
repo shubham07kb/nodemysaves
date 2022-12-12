@@ -185,4 +185,4 @@ Use this space to list resources you find helpful and would like to give credit 
 [license-url]: https://github.com/shubham07kb/nodemysaves/blob/main/LICENSE
 [linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
 [linkedin-url]: https://www.linkedin.com/in/shubhamkumarbansal
-[product-screenshot]: readme/img/screenshot.png
+[product-screenshot]: readme/img/Screenshot.png
