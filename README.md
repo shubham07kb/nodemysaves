@@ -182,7 +182,7 @@ Use this space to list resources you find helpful and would like to give credit 
 [issues-shield]: https://img.shields.io/github/issues/shubham07kb/nodemysaves.svg?style=for-the-badge
 [issues-url]: https://github.com/shubham07kb/nodemysaves/issues
 [license-shield]: https://img.shields.io/github/license/shubham07kb/nodemysaves.svg?style=for-the-badge
-[license-url]: https://github.com/shubham07kb/nodemysaves/blob/master/LICENSE.txt
+[license-url]: https://github.com/shubham07kb/nodemysaves/blob/main/LICENSE
 [linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
 [linkedin-url]: https://www.linkedin.com/in/shubhamkumarbansal
 [product-screenshot]: readme/img/screenshot.png
