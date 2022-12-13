@@ -1,3 +1,5 @@
+const fs=require('fs');
+const path=require('path');
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const { ObjectId } = require("mongodb");
@@ -7,6 +9,14 @@ const mail = require('../modules/mail');
 emailreg = /\S+@\S+\.\S+/;
 usernamereg = '^[a-zA-Z0-9_]{3,20}$';
 pswdreg = '^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$';
+function randomIntFromInterval(min,max){return Math.floor(Math.random()*(max-min+1)+min)}
+function hex2a(hexx) {
+  var hex = hexx.toString();//force conversion
+  var str = '';
+  for (var i = 0; i < hex.length; i += 2)
+      str += String.fromCharCode(parseInt(hex.substr(i, 2), 16));
+  return str;
+}
 async function uniquerm(prc){
   let uuidv4=uuid.v4();
   q=await db.query(prc, 'rmkeys', {rm:uuidv4});
@@ -26,6 +36,30 @@ async function getaccount(req,prc){
     if(rjwt!=null){
       q=await db.query(prc, 'users', {_id:ObjectId(rjwt.id)});
     }
+  }
+}
+async function rmkeyhandle(req, res, prc){
+  if(req.body.rmkey!=undefined && req.body.rmkey!=''){
+    let rmkey=req.body.rmkey;
+    q=await db.query(prc, 'rmkeys', {rm:rmkey});
+    if(q.length==1){
+      q=await db.query(prc, 'users', {_id:ObjectId(q[0].uid)});
+      let mainid=q[0]._id;
+      all_user_json={id:mainid, email:q[0].email, username:q[0].username, fname:q[0].fname, lname:q[0].lname, role:q[0].role};
+      let token=jwt.sign({ id: mainid },prc.jwt_key,{algorithm:prc.jwt_key_method});
+      let token_s=jwt.sign(all_user_json,prc.jwt_s_key,{algorithm:prc.jwt_s_key_method});
+      let token_c=jwt.sign(all_user_json,prc.jwt_c_key,{algorithm:prc.jwt_c_key_method});
+      token=token.split('.');
+      token_s=token_s.split('.');
+      token_c=token_c.split('.');
+      token_data={token:{header:token[0],data:token[1],key:token[2]}, token_s:{header:token_s[0],data:token_s[1],key:token_s[2]}, token_c:{header:token_c[0],data:token_c[1],key:token_c[2]}, rm:'y', rmk:rmkey};
+      res.send({ status: 'success', statcode:1, message: 'Logged in.', accdata: token_data });
+    } else {
+      res.send({ status: 'error', statcode:0, message: 'Invalid request.' });
+    }
+  } else {
+    res.send({ status: 'error', statcode:0, message: 'Invalid request.' });
+    console.log('Invalid request. (rmkeyhandle)');
   }
 }
 async function worker(req, res, prc) {
@@ -49,6 +83,9 @@ async function worker(req, res, prc) {
             let token=jwt.sign({ id: mainid },prc.jwt_key,{algorithm:prc.jwt_key_method});
             let token_s=jwt.sign(all_user_json,prc.jwt_s_key,{algorithm:prc.jwt_s_key_method});
             let token_c=jwt.sign(all_user_json,prc.jwt_c_key,{algorithm:prc.jwt_c_key_method});
+            ccc=jwt.decode(token_c);
+            console.log(ccc);
+            console.log(token_c);
             if(rm=='y'){
               qrm=await db.query(prc, 'usersext', {uid:mainid});
               rm5=qrm[0].rms.r5;
@@ -61,7 +98,8 @@ async function worker(req, res, prc) {
             token=token.split('.');
             token_s=token_s.split('.');
             token_c=token_c.split('.');
-            res.send({ status: 'success', statcode:1, message: 'Logged in.', token:{header:token[0],data:token[1],key:token[2]}, token_S:{header:token_s[0],data:token_s[1],key:token_s[2]}, token_c:{header:token_c[0],data:token_c[1],key:token_c[2]}, rm:rm, rmk:rmkey});
+            token_data={token:{header:token[0],data:token[1],key:token[2]}, token_s:{header:token_s[0],data:token_s[1],key:token_s[2]}, token_c:{header:token_c[0],data:token_c[1],key:token_c[2]}, rm:rm, rmk:rmkey};
+            res.send({ status: 'success', statcode:1, message: 'Logged in.', accdata: token_data });
           } else {
             res.send({ status: 'error', statcode:0, message: 'Invalid request.' });
           }
@@ -91,7 +129,10 @@ async function worker(req, res, prc) {
               res.send({ status: 'error', statcode:0, message: 'Invalid OTP.' });
             }
           } else{
-            q={email:qq[0].email,username:qq[0].username,fname:qq[0].fname,lname:qq[0].lname,pswd:qq[0].pswd,role:'u'};
+            ran=randomIntFromInterval(0,9);
+            userimg=fs.readFileSync(path.join(prc.rootpath,'/host/img/user/profile/pre/'+ran+'.svg'));
+            userimg=encodeURI(userimg);
+            q={email:qq[0].email,username:qq[0].username,fname:qq[0].fname,lname:qq[0].lname,pswd:qq[0].pswd,role:'u',img:userimg};
             qq={email:qq[0].email};
             qq=await db.del(prc, 'createuser', qq);
             q = await db.insert(prc, 'users', q);
@@ -152,5 +193,6 @@ async function worker(req, res, prc) {
 }
 module.exports = {
   worker: worker,
-  getaccount: getaccount
+  getaccount: getaccount,
+  rmkeyhandle: rmkeyhandle,
 }

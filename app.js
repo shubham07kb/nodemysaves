@@ -10,6 +10,7 @@ const session        = require('express-session');
 const cookieParser   = require('cookie-parser');
 const bodyParser     = require('body-parser');
 const compression    = require('compression');
+const webmaker       = require('./server/modules/webmaker');
 const jshandler      = require('./server/modules/jshandler');
 const installer      = require('./server/modules/installer');
 const minify         = require('./server/modules/minify');
@@ -83,13 +84,27 @@ async function apphandle(req,res){
     } else if(appparams[1]=='shortlink'){
       short.api(appparams[2],res,process.env);
     }
-  } else if(appparams[0]=='acc'  && (appparams[1]=='respondacc')){
-    account.worker(req,res,process.env);
+  } else if(appparams[0]=='acc'  && (appparams[1]=='respondacc' || appparams[1]=='rmkey')){
+    if(appparams[1]=='respondacc'){
+      account.worker(req,res,process.env);
+    } else if(appparams[1]=='rmkey'){
+      account.rmkeyhandle(req,res,process.env);
+    }
   } else if(appparams[0]=='s'){
     short.direct(appparams[1],res,process.env);
+  } else if(appparams[0]=='k'){
+    res.header('content-type', 'text/html');
+    res.render('a.html');
+  } else if(appparams[0]=='manifest.json'){
+    res.header('content-type', 'application/json');
+    res.send(process.env.manifestjson);   
+  } else if(appparams[0]=='feed.rss'){
+    res.header('content-type', 'application/rss+xml');
+    res.send(webmaker.rssfeedcreate());
   } else {
     jsquery=jshandler.jsquery(res);
-    res.render('index.min.html',{htmltitle: process.env.title, jsquery: jsquery});
+    if(process.env.manifestpresent=='y'){manifestvar='<link rel="manifest" href="/manifest.json" />';console.log('manifest')} else {manifestvar='';}
+    res.render('index.min.html',{htmltitle: process.env.title, jsquery: jsquery, manifestvar: manifestvar});
   }
 }
 app.all('*', (req, res) => {

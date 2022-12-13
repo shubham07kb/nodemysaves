@@ -4,7 +4,7 @@ function accjsrun() {
 function accjsdes() {
     cl('accjsdes');
 }
-function showorhidepswd() {
+function showorhidepswd(){
     let pt = gebi('pswd').getAttribute("type") === "password" ? "text" : "password";
     gebi('pswd').setAttribute("type", pt);
     gebi('pswdeye').classList.toggle('eye');
@@ -29,18 +29,8 @@ function respondeacc(a,b){
                     ps('/login');
                 } else if(b=='ga'){
                     removeAllCookie();
-                    if(res.rm=='y'){setCookie('rmkey',res.rmk,30);}
-                    setCookie('_acc_header',res.token.header,1);
-                    setCookie('_acc_data',res.token.data,1);
-                    setCookie('_acc_key',res.token.key,1);
-                    setCookie('_s_acc_header',res.token_S.header,1);
-                    setCookie('_s_acc_data',res.token_S.data,1);
-                    setCookie('_s_acc_key',res.token_S.key,1);
-                    setCookie('_c_acc_header',res.token_c.header,1);
-                    setCookie('_c_acc_data',res.token_c.data,1);
-                    setCookie('_c_acc_key',res.token_c.key,1);
+                    accountset(res.accdata);
                     ps('/app');
-                    location.reload();
                 }
             } else {
                 cl(res);

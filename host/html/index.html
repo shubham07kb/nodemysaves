@@ -9,11 +9,12 @@
   <meta id="headdescription" name="description" content="" />
   <meta id="headauthor" name="author" content="Shubham Kumar Bansal" />
   <meta id="headcolor" name="theme-color" content="#121212" />
-  <title id="headtitle">
-    <%= htmltitle %>
-  </title>
-  <link rel="icon" type="image/x-icon" href="/favicon.ico" />
-  <link rel="apple-touch-icon" href="/favicon.png" />
+  <title id="headtitle"><%= htmltitle %></title>
+  <link rel="sitemap" type="application/rss+xml" title="Sitemap" href="/feed.rss">
+  <link rel="apple-touch-icon" sizes="180x180" href="/icon/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/iconfavicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/icon/favicon-16x16.png">
+  <%- manifestvar %>
   <style id="loaderstyle">
     * {
       border: 0;

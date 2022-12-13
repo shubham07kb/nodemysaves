@@ -106,6 +106,31 @@ function install(file) {
     } else {
       throw new Error('security_keys is missing');
     }
+    if(config.manifest!=undefined){
+      if(config.manifest.present!=undefined && (config.manifest.present=='y' || config.manifest.present=='n') && config.manifest.iswebapp!=undefined && (config.manifest.iswebapp=='y' || config.manifest.iswebapp=='n')){
+        if(config.manifest.present=='n' && config.manifest.iswebapp=='y'){ 
+          throw new Error('Web app can not be installed without manifest');
+        } else if(config.manifest.present=='y'){
+          if(typeof config.manifest.json=='object'){
+            process.env.manifestpresent=config.manifest.present;
+            process.env.iswebapp=config.manifest.iswebapp;
+            process.env.manifestjson=JSON.stringify(config.manifest.json);
+            console.log("Manifest is present");
+          } else {
+            throw new Error('manifest only runs with json object with name json');
+          }
+        } else{
+          process.env.manifestpresent=config.manifest.present;
+          process.env.iswebapp=config.manifest.iswebapp;
+          process.env.manifestjson='{"name":"'+config.app.name+'", "short_name":"'+config.app.name+'"}';
+        }
+        console.log("Manifest setup complete");
+      } else {
+        throw new Error('manifest is missing or not correct for present and iswebapp');
+      }
+    } else {
+      throw new Error('config is missing manifest object');
+    }
   } else {
     throw new Error('config is missing security_keys object');
   }

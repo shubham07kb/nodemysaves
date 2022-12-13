@@ -1,35 +1,75 @@
 {
-    "app" : {
-        "name" : "MySaves",
-        "version" : "0.0.0 beta hax",
-        "description" : "CMS",
-        "creator" : "Shubham",
-        "email" : "kumarbansal.shubham07@gmail.com"
+    "app": {
+        "name": "My Saves",
+        "version": "0.0.0 beta hax",
+        "description": "CMS",
+        "creator": "Shubham",
+        "email": "kumarbansal.shubham07@gmail.com"
     },
-    "db":{
-        "type" : "mongo",
-        "mongostring" : "mongodb+srv://Shubham:Shubham@mysaves.wj18yun.mongodb.net/?retryWrites=true",
-        "dbname" : "mysaves"
+    "db": {
+        "type": "mongo",
+        "mongostring": "mongodb+srv://Shubham:Shubham@mysaves.wj18yun.mongodb.net/?retryWrites=true",
+        "dbname": "mysaves"
     },
-    "email":{
-        "type" : "host",
-        "host" : "smtp.gmail.com",
-        "port" : 587,
-        "email" : "web@mysaves.live",
-        "auth" : {
-            "user" : "kumarbansal.shubham07@gmail.com",
-            "pass" : "wojjdxyusycttmwf"
+    "email": {
+        "type": "host",
+        "host": "smtp.gmail.com",
+        "port": 587,
+        "email": "web@mysaves.live",
+        "auth": {
+            "user": "kumarbansal.shubham07@gmail.com",
+            "pass": "wojjdxyusycttmwf"
         }
     },
-    "security_keys" : {
-        "session_key" : "fdttf7tb6dbgfv",
-        "sec_cookies_method" : "sha256",
-        "secure_transfer_encrypt_key" : "bshb76tfvsyg",
-        "jwt_key" : "hbhg7ryvyfGvYGV67gb",
-        "jwt_key_method" : "HS512",
-        "jwt_s_key" : "fghdsgfjdshfbghdsf",
-        "jwt_s_key_method" : "HS512",
-        "jwt_c_key" : "hdsbfzknbfcjhdbg",
-        "jwt_c_key_method" : "HS512"
+    "security_keys": {
+        "session_key": "fdttf7tb6dbgfv",
+        "sec_cookies_method": "sha256",
+        "secure_transfer_encrypt_key": "bshb76tfvsyg",
+        "jwt_key": "hbhg7ryvyfGvYGV67gb",
+        "jwt_key_method": "HS512",
+        "jwt_s_key": "fghdsgfjdshfbghdsf",
+        "jwt_s_key_method": "HS512",
+        "jwt_c_key": "hdsbfzknbfcjhdbg",
+        "jwt_c_key_method": "HS512"
+    },
+    "manifest": {
+        "present": "y",
+        "iswebapp": "y",
+        "json": {
+            "name": "My Saves",
+            "short_name": "My Saves",
+            "description": "CMS",
+            "icons": [
+                {
+                    "src": "/icon/android-chrome-192x192.png",
+                    "sizes": "192x192",
+                    "type": "image/png"
+                },
+                {
+                    "src": "/icon/android-chrome-512x512.png",
+                    "sizes": "512x512",
+                    "type": "image/png"
+                },
+                {
+                    "src": "/icon/android-chrome-512x512.png",
+                    "sizes": "512x512",
+                    "type": "image/png",
+                    "purpose": "any maskable"
+                }
+            ],
+            "theme_color": "#ffffff",
+            "background_color": "#ffffff",
+            "display": "standalone",
+            "id": "/pwa",
+            "start_url": "/pwa",
+            "scope": "/",
+            "related_applications": [
+                {
+                    "id": "com.shubhamkbapp.mysaves",
+                    "url": "/appstore/android/app/com.shubhamkbapp.mysaves",
+                    "platform": "play"
+                }
+            ]
+        }
     }
 }
