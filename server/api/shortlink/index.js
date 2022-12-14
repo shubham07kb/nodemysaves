@@ -1,7 +1,6 @@
 const path=require('path');
 const db=require(path.join("../../modules/db"));
 async function api(s,res,prc){
-    console.log(prc.mongostring);
     q={sn:s};
     p=await db.query(prc,'shortlink',q);
     res.header('Content-Type', 'application/json');
@@ -15,7 +14,6 @@ async function api(s,res,prc){
 }
 async function direct(s,res,prc){
     q={sn:s};
-    console.log(prc.mongostring);
     p=await db.query(prc,'shortlink',q);
     if(p.length==0){
     res.redirect('/error?msg=No shortlink found');

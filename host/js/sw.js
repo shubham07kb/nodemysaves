@@ -1,7 +1,16 @@
-const cacheName='v0.0.1';
+const cacheName='v0.0.2';
 const cacheAssets=[
     '/',
-    '/app.js?jsfile=app.js',
+    '/app.js?jsfile=serviceworker',
+    '/app.js?jsfile=app',
+    '/favicon.ico',
+    '/icon/favicon-16x16.png',
+    '/icon/favicon-32x32.png',
+    '/icon/apple-touch-icon.png',
+    '/icon/android-chrome-192x192.png',
+    '/icon/android-chrome-512x512.png',
+    '/robots.txt',
+    '/manifest.json',
 ];
 self.addEventListener('install', e => {
     console.log('installed');

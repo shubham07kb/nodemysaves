@@ -14,15 +14,11 @@ const webmaker       = require('./server/modules/webmaker');
 const jshandler      = require('./server/modules/jshandler');
 const installer      = require('./server/modules/installer');
 const minify         = require('./server/modules/minify');
-const prepage        = require('./server/api/prepage');
-const ip             = require('./server/api/ip');
-const short          = require('./server/api/shortlink');
 const account        = require('./server/acc');
+const apihandler     = require('./server/api');
+
 process.env.rootpath=__dirname;
 const uuid=require('uuid');
-// for(let i=0;i<os.cpus().length;i++){ 
-//   console.log('CPU'+i+' : '+os.cpus()[i].model);
-//  }
 
 installer.install('config.json');
 
@@ -67,22 +63,23 @@ async function apphandle(req,res){
     } else if(appparams[1]=='req'){
       res.send(JSON.stringify(req, replacerFunc()));
     }
-  } else if(appparams[0]=='api' && ((appparams[1]=='prepage' && (appparams[2]=='html' || appparams[2]=='meta') && appparams[3]!='' && appparams[3]!=undefined) || (appparams[1]=='get' && (appparams[2]=='ip' || (appparams[2]=='ipdata'))) || (appparams[1]=='shortlink' && appparams[2]!='' && appparams[2]!=undefined))){
+  } else if(appparams[0]=='api' && ((appparams[1]=='prepage' && (appparams[2]=='html' || appparams[2]=='meta') && appparams[3]!='' && appparams[3]!=undefined) || (appparams[1]=='get' && (appparams[2]=='ip' || appparams[2]=='ua')) || (appparams[1]=='shortlink' && appparams[2]!='' && appparams[2]!=undefined))){
     if(appparams[1]=='prepage'){
       if(appparams[2]=='html'){
-        prepage.html(appparams[3],req,res);
+        apihandler.prepagehtml(appparams[3],req,res);
       } else if(appparams[2]=='meta'){
-        prepage.meta(appparams[3],req,res);
+        apihandler.prepagemeta(appparams[3],req,res);
       }
     } else if(appparams[1]=='get'){
       if(appparams[2]=='ip'){
         res.header('Content-Type', 'application/json');
-        res.send(ip.getip(req));
-      } else if(appparams[2]=='ipdata'){
-        ip.ipdata(req,res);
+        res.send(apihandler.getip(req));
+      } else if(appparams[2]=='ua'){
+        res.header('Content-Type', 'application/json');
+        res.send(apihandler.userpraser(req));
       }
     } else if(appparams[1]=='shortlink'){
-      short.api(appparams[2],res,process.env);
+      apihandler.shortlinkapi(appparams[2],res,process.env);
     }
   } else if(appparams[0]=='acc'  && (appparams[1]=='respondacc' || appparams[1]=='rmkey')){
     if(appparams[1]=='respondacc'){
@@ -91,7 +88,7 @@ async function apphandle(req,res){
       account.rmkeyhandle(req,res,process.env);
     }
   } else if(appparams[0]=='s'){
-    short.direct(appparams[1],res,process.env);
+    apihandler.shortlink(appparams[1],res,process.env);
   } else if(appparams[0]=='k'){
     res.header('content-type', 'text/html');
     res.render('a.html');
@@ -103,10 +100,10 @@ async function apphandle(req,res){
     res.send(webmaker.rssfeedcreate());
   } else {
     jsquery=jshandler.jsquery(res);
-    if(process.env.manifestpresent=='y'){manifestvar='<link rel="manifest" href="/manifest.json" />';console.log('manifest')} else {manifestvar='';}
+    if(process.env.manifestpresent=='y'){manifestvar='<link rel="manifest" href="/manifest.json" />';} else {manifestvar='';}
     res.render('index.min.html',{htmltitle: process.env.title, jsquery: jsquery, manifestvar: manifestvar});
   }
-}
+} 
 app.all('*', (req, res) => {
   apphandle(req,res);
 });

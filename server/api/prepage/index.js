@@ -12,6 +12,7 @@ function meta(page,req,res){
     }
 }
 function html(page,req,res){
+    res.header('Content-Type', 'text/html');
     if(page=='home'){
         res.send(fs.readFileSync('./host/html/web/home.min.html'));
     } else if(page=='signup' || page=='register'){

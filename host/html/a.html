@@ -11,9 +11,32 @@
 <body>
     <div id="main"></div>
     <script>
-        p = '';
-        console.log(window);
-        document.getElementById('main').innerHTML = p;
+        async function ipnbrowserdataform() {
+    let ip = await fetch("https://b4c0-49-36-185-164.in.ngrok.io/api/get/ip").then((response) => response.json()).then((data) => data.ip);
+  let ipdata = await fetch("https://ipwho.is/" + ip + "?fields=ip,message,success,type,continent,continent_code,country,country_code,region,region_code,city,latitude,longitude,postal,calling_code,calling_code,capital,borders,flag,connection.isp,connection.domain,timezone").then((response) => response.json()).then((data) => data);
+        ipdata['flag']['img'] = '/img/country/flag/svg/' + ipdata['country_code'].toLowerCase() + '.svg';
+        uafetch = await fetch("https://b4c0-49-36-185-164.in.ngrok.io/api/get/ua").then((response) => response.json()).then((data) => data);
+        uadata = {};
+        uadata['client'] = uafetch['client'];
+        uadata['os'] = uafetch['os'];
+        uadata['device'] = uafetch['device'];
+        if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+            uadata['is_mobile'] = true;
+        } else {
+            uadata['is_mobile'] = false;
+        }
+        uadata['current_is_mobile'] = navigator.userAgentData.mobile;
+        uadata['is_touch'] = ('ontouchstart' in window || navigator.maxTouchPoints);
+        let sbget = await navigator.userAgentData.getHighEntropyValues(["architecture", "bitness"]);
+        uadata['system_build']= {'architecture':sbget['architecture'],'bitness':sbget['bitness']};
+        ipauadata = {'ipdata':ipdata,'uadata':uadata};
+        console.log(ipauadata);
+        forcookieip = encodeURI(JSON.stringify(ipauadata));
+        document.getElementById('main').innerHTML = forcookieip;
+    }
+ipnbrowserdataform();
+        
+        
 
         // console.log(navigator);
         // console.log(navigator.userAgentData.toJSON());
@@ -37,12 +60,16 @@
 
         // navigator.getBattery().then((battery) => {console.log(battery);});
 
-        // for save 
+
+
+
+
+        // for save
 
         //navigator.userAgent                                              - all data
         //navigator.language                                               - primary language
         //navigator.languages. [0,1,2,...]                                 - all selected languages
-        //navigator.userAgentData.toJSON()                                 - all data basic       
+        //navigator.userAgentData.toJSON()                                 - all data basic
         //navigator.userAgentData.getHighEntropyValues                     - all data advanced
         //
 
@@ -68,7 +95,7 @@
         //navigator.unregisterProtocolHandler                               - unregister protocol handler
         //
 
-        //window 
+        //window
         //
         //screen
 
