@@ -10,31 +10,25 @@ const session        = require('express-session');
 const cookieParser   = require('cookie-parser');
 const bodyParser     = require('body-parser');
 const compression    = require('compression');
-
 const account        = require('./server/acc');
 const apihandler     = require('./server/api');
 const appmodule      = require('./server/base');
 const port           = process.env.PORT || 3000;
 process.env.rootpath =__dirname;
-
-appmodule.installer('config.json');
+appmodule.installer('config.json',process.env);
 
 const replacerFunc   = ()=>{const visited=new WeakSet();return (key, value)=>{if(typeof value==="object" && value!==null){if(visited.has(value)){return;}visited.add(value);}return value;};};
 var urlencodedParser = bodyParser.urlencoded({ extended: false })  
 
-app.set('views', path.join(__dirname, 'host/html'));
-app.engine('html', require('ejs').renderFile);
-app.set('view engine', 'html');
-app.use(express.static(path.join(__dirname, 'host/static')));
-app.use('/content', express.static(path.join(__dirname, 'host')));
-app.set('trust proxy', ['loopback', 'linklocal', 'uniquelocal'])
-app.use(cors());
-app.use(urlencodedParser);
-app.use(compression());
-app.use(cookieParser(httpOnly=false));
+app.set('views', path.join(__dirname, 'host/html'));                 app.engine('html', require('ejs').renderFile);
+app.set('view engine', 'html');                                      app.use(express.static(path.join(__dirname, 'host/static')));
+app.use('/content', express.static(path.join(__dirname, 'host')));   app.set('trust proxy', ['loopback', 'linklocal', 'uniquelocal'])
+app.use(cors());                                                     app.use(urlencodedParser);
+app.use(compression());                                              app.use(cookieParser(httpOnly=false));
 app.use(session({secret:process.env.session_key,resave: true,cookie:{maxAge:1000*60*60*24},saveUninitialized: true}));
 
 async function apphandle(req,res){
+  console.log(process.env.email);
   appparams=req.params[0].split('/');
   appparams.shift();
   reqhostname="https://"+req.hostname;
