@@ -43,21 +43,22 @@ async function jsmin(jsloc) {
   });
 }
 
-function doing() {
-  aaa = process.env.rootpath;
-  htmlmin(aaa + "/host/html/");
-  htmlmin(aaa + "/host/html/acc/");
-  htmlmin(aaa + "/host/html/app/");
-  htmlmin(aaa + "/host/html/web/");
-  cssmin(aaa + "/host/css/");
-  cssmin(aaa + "/host/css/acc/");
-  cssmin(aaa + "/host/css/app/");
-  cssmin(aaa + "/host/css/web/");
-  jsmin(aaa + "/host/js/");
-  jsmin(aaa + "/host/js/acc/");
-  jsmin(aaa + "/host/js/app/");
-  jsmin(aaa + "/host/js/web/");
-  jsmin(aaa + "/host/js/lib/");
+async function doing(res,prc) {
+  aaa = prc.rootpath;
+  await htmlmin(aaa + "/host/html/");
+  await htmlmin(aaa + "/host/html/acc/");
+  await htmlmin(aaa + "/host/html/app/");
+  await htmlmin(aaa + "/host/html/web/");
+  await cssmin(aaa + "/host/css/");
+  await cssmin(aaa + "/host/css/acc/");
+  await cssmin(aaa + "/host/css/app/");
+  await cssmin(aaa + "/host/css/web/");
+  await jsmin(aaa + "/host/js/");
+  await jsmin(aaa + "/host/js/acc/");
+  await jsmin(aaa + "/host/js/app/");
+  await jsmin(aaa + "/host/js/web/");
+  await jsmin(aaa + "/host/js/lib/");
+  res.send('Minify done');
 }
 module.exports = {
   doing: doing

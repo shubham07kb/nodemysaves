@@ -12,7 +12,6 @@ async function getshortlink(a,b=0){p=await fetch('/api/shortlink/'+a).then(respo
 function socketconnect(){socket=io.connect('https://'+window.location.hostname);socket.on('connect',function(){cl('Socket connected');});socket.on('message', function(data){document.write(data)});}
 function endloader(){gebi('loader').innerHTML='';gebi('loaderstyle').innerHTML='';}
 function ps(a,b=sitename){let stateObj={id:"100"};window.history.pushState(stateObj, b, a);route();}
-async function submitproxy(udata,b=0){a=udata.urlpn.slice(3);asplit=a.split('/');if(a.length==0){aa='http://'+window.location.hostname+udata.urlse;}else if(a.startsWith('http://')||a.startsWith('https://')){aa=a+udata.urlse;}else{aisd=0;asd=asplit[0].split('.');if(asd.length>=2){asde=asd[asd.length-1];asdm=asd[asd.length-2];if(asdm.length!=0 && asde.length>1 && asdm.match('^[a-zA-Z0-9]+$') && asde.match('^[a-zA-Z]+$')){aa='http://'+a+udata.urlse;aisd=1;}}if(aisd==0){aa='http://'+window.location.hostname+'/'+a+udata.urlse;}}await fetch('/api/analitycs/proxy/'+encodeURIComponent(aa));if(b==0){window.location.href=aa;}else if(b==1){window.open(aa,'_blank');}}
 function getsetpage(a,b) {
   const xhr1 = new XMLHttpRequest();
   const xhr2 = new XMLHttpRequest();
@@ -37,41 +36,31 @@ function route(){
   const udata=loadurldata();
   if(udata.urlpna[0]=='signup' || udata.urlpna[0]=='signin' || udata.urlpna[0]=='register' || udata.urlpna[0]=='login' || udata.urlpna[0]=='forgot'){
     if(gebi('themec').innerHTML!='acc'){destroypretheme();gebi('themec').content='acc';changetheme();}
-    getprehtml(udata.urlpna[0]);
+    getsetpage(udata.urlpna[0],'prepage');
   } else if(udata.urlpna[0]=='app'){
     if(gebi('themec').innerHTML!='app'){destroypretheme();gebi('themec').content='app';changetheme();}
     if(udata.urlpna[1]=='dashboard'){
-      getdashhtml(udata.urlpn.replace('/app/dashboard/',''));
+      getsetpage(udata.urlpn.replace('/app/dashboard/',''),'admin');
     } else{
-      getapphtml(udata.urlpn.replace('/app/',''));
+      getsetpage(udata.urlpn.replace('/app/',''),'app');
     }
   } else{
     if(gebi('themec').innerHTML!='web'){destroypretheme();gebi('themec').content='web';changetheme();}
     if(udata.urlpna[0]=='' || udata.urlpna[0]=='home'){
       if(udata.urlpna[0]=='home'){ps('/');} else{getsetpage('home','prepage');}
     } else if(udata.urlpna[0]=='blog'){
-      if(udata.urlpna[1]==undefined){
-        a='';
-      } else{
-        a=udata.urlpna[1];
-      }
-      cl(a+' - '+typeof a);
-      (udata.urlpna[1]);
+      if(udata.urlpna[1]==undefined){a='';} else{a=udata.urlpn.replace('/blog/','');}getsetpage(a,'blog');
     } else if(udata.urlpna[0]=='collection'){
-      getcolhtml(udata.urlpna[1]);
+      if(udata.urlpna[1]==undefined){a='';} else{a=udata.urlpn.replace('/collection/','');}getsetpage(a,'collection');
     } else if(udata.urlpna[0]=='project'){
-      getprohtml(udata.urlpna[1]);
+      if(udata.urlpna[1]==undefined){a='';} else{a=udata.urlpn.replace('/project/','');}getsetpage(a,'project');
+    } else if(udata.urlpna[0]=='appstore'){
+      if(udata.urlpna[1]==undefined){a='';} else{a=udata.urlpn.replace('/project/','');}getsetpage(a,'appstore');
     } else if(udata.urlpna[0]=='s'){
       if(udata.urlpna.length==2 && udata.urlpna[1].match('^[a-zA-Z0-9]+$')){
         getshortlink(udata.urlpna[1]);
       } else{
         cl('short link is not valid');
-      }
-    } else if(udata.urlpna[0]=='p'){
-      if(udata.urlpn.startsWith('/p/') || udata.urlse.length!=0){
-        submitproxy(udata);
-      }  else{
-        cl('proxy link is not valid');
       }
     } else{
       getprehtml(udata.urlpna[0]);
@@ -79,5 +68,5 @@ function route(){
   }
 }
 socket="";
-async function app(){httpscheck();await ipnbrowserdataform();accounthandler();socketconnect();presetup();theme();tools();route();endloader();}
+async function app(){httpscheck();await ipnbrowserdataform();accounthandler();presetup();theme();tools();route();endloader();}
 try{app();}catch(e){cl(e);gebi("starterror").innerHTML="Error: "+e;endloader();}

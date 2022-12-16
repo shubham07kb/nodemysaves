@@ -26,7 +26,7 @@ function jsscript(query, res, host) {
     p+=fs.readFileSync(path.join(process.env.rootpath+"/host/js/lib/jwt_decode.min.js"));
     if (query.jsfile == 'app'){
       if(process.env.iswebapp){
-        p+=fs.readFileSync(path.join(process.env.rootpath+"/host/js/service-worker.min.js"));;
+        // p+=fs.readFileSync(path.join(process.env.rootpath+"/host/js/service-worker.min.js"));;
       };
       p += fs.readFileSync('./host/js/app.min.js');
     } else if (query.jsfile == 'ext') {

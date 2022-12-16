@@ -10,20 +10,16 @@ const session        = require('express-session');
 const cookieParser   = require('cookie-parser');
 const bodyParser     = require('body-parser');
 const compression    = require('compression');
-const webmaker       = require('./server/modules/webmaker');
-const jshandler      = require('./server/modules/jshandler');
-const installer      = require('./server/modules/installer');
-const minify         = require('./server/modules/minify');
+
 const account        = require('./server/acc');
 const apihandler     = require('./server/api');
+const appmodule      = require('./server/base');
+const port           = process.env.PORT || 3000;
+process.env.rootpath =__dirname;
 
-process.env.rootpath=__dirname;
-const uuid=require('uuid');
-
-installer.install('config.json');
+appmodule.installer('config.json');
 
 const replacerFunc   = ()=>{const visited=new WeakSet();return (key, value)=>{if(typeof value==="object" && value!==null){if(visited.has(value)){return;}visited.add(value);}return value;};};
-const port           = process.env.PORT || 3000;
 var urlencodedParser = bodyParser.urlencoded({ extended: false })  
 
 app.set('views', path.join(__dirname, 'host/html'));
@@ -32,16 +28,11 @@ app.set('view engine', 'html');
 app.use(express.static(path.join(__dirname, 'host/static')));
 app.use('/content', express.static(path.join(__dirname, 'host')));
 app.set('trust proxy', ['loopback', 'linklocal', 'uniquelocal'])
-app.use(cors());  //5 */1 * * *  ,  0 0 0-23 * * *  ,  "cronpass": "Shub"
+app.use(cors());
 app.use(urlencodedParser);
 app.use(compression());
 app.use(cookieParser(httpOnly=false));
-app.use(session({
-  secret: process.env.session_key,
-  resave: true,
-  cookie: { maxAge: 1000 * 60 * 60 * 24 },
-  saveUninitialized: true,
-}));
+app.use(session({secret:process.env.session_key,resave: true,cookie:{maxAge:1000*60*60*24},saveUninitialized: true}));
 
 async function apphandle(req,res){
   appparams=req.params[0].split('/');
@@ -52,10 +43,9 @@ async function apphandle(req,res){
     account.getaccount(req,process.env);
     res.send(reqhostname);
   } else if(appparams[0]=='app.js'){
-    jsscript=jshandler.jsscript(req.query,res,reqhostname);
+    jsscript=appmodule.jsscript(req.query,res,reqhostname);
   } else if(appparams[0]=='minify'){
-    minify.doing();
-    res.send('Minify done');
+    appmodule.minify(res,process.env);
   } else if(appparams[0]=='server' && (appparams[1]=='cron' || appparams[1]=='req')){
     res.set('Content-Type', 'application/json');
     if(appparams[1]=='cron'){
@@ -63,7 +53,7 @@ async function apphandle(req,res){
     } else if(appparams[1]=='req'){
       res.send(JSON.stringify(req, replacerFunc()));
     }
-  } else if(appparams[0]=='api' && ((appparams[1]=='prepage' && (appparams[2]=='html' || appparams[2]=='meta') && appparams[3]!='' && appparams[3]!=undefined) || (appparams[1]=='get' && (appparams[2]=='ip' || appparams[2]=='ua')) || (appparams[1]=='shortlink' && appparams[2]!='' && appparams[2]!=undefined))){
+  } else if(appparams[0]=='api' && ((appparams[1]=='prepage' && (appparams[2]=='html' || appparams[2]=='meta') && appparams[3]!='' && appparams[3]!=undefined) || (appparams[1]=='get' && (appparams[2]=='ip' || appparams[2]=='ua')) || (appparams[1]=='shortlink' && appparams[2]!='' && appparams[2]!=undefined) || (appparams[1]=='analytics'))){
     if(appparams[1]=='prepage'){
       if(appparams[2]=='html'){
         apihandler.prepagehtml(appparams[3],req,res);
@@ -80,6 +70,7 @@ async function apphandle(req,res){
       }
     } else if(appparams[1]=='shortlink'){
       apihandler.shortlinkapi(appparams[2],res,process.env);
+    } else if(appparams[1]=='analytics'){
     }
   } else if(appparams[0]=='acc'  && (appparams[1]=='respondacc' || appparams[1]=='rmkey')){
     if(appparams[1]=='respondacc'){
@@ -89,6 +80,9 @@ async function apphandle(req,res){
     }
   } else if(appparams[0]=='s'){
     apihandler.shortlink(appparams[1],res,process.env);
+  } else if(appparams[0]=='p' && (appparams.length>1 || Object.keys(req.query).length>0)){
+    pl=await apihandler.proxylink(req.params[0],req,res,process.env);
+    apihandler.proxyanalytics(pl);
   } else if(appparams[0]=='k'){
     res.header('content-type', 'text/html');
     res.render('a.html');
@@ -97,9 +91,9 @@ async function apphandle(req,res){
     res.send(process.env.manifestjson);   
   } else if(appparams[0]=='feed.rss'){
     res.header('content-type', 'application/rss+xml');
-    res.send(webmaker.rssfeedcreate());
-  } else {
-    jsquery=jshandler.jsquery(res);
+    res.send(appmodule.rssfeedcreate());
+  } else{
+    jsquery=appmodule.jsquery(res);
     if(process.env.manifestpresent=='y'){manifestvar='<link rel="manifest" href="/manifest.json" />';} else {manifestvar='';}
     res.render('index.min.html',{htmltitle: process.env.title, jsquery: jsquery, manifestvar: manifestvar});
   }
@@ -118,6 +112,4 @@ io.on('connection', (socket) => {
   });
 });
 
-http.listen(port, () => {
-  console.log(`App running at ${port}`);
-});
+http.listen(port, () => {console.log(`App running at ${port}`);});
